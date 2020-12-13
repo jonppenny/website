@@ -27,9 +27,9 @@ type Media struct {
 type Page struct {
 	ID      int
 	Title   string
-	Slug    string
-	Status  string
 	Content string
+	Status  string
+	Slug    string
 	Created time.Time
 	Updated time.Time
 }
