@@ -14,19 +14,33 @@ type UserModel struct {
 }
 
 func (m *UserModel) Insert(name, email, password, role string) error {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 12)
+	hashedPassword, err := bcrypt.GenerateFromPassword(
+		[]byte(password),
+		12,
+	)
 	if err != nil {
 		return err
 	}
 
-	stmt := `INSERT INTO users (name, email, hashed_password, role, created, updated)
-	VALUES (?, ?, ?, ?, UTC_TIMESTAMP(), UTC_TIMESTAMP())`
+	stmt := `INSERT INTO users (name, email, hashed_password, role, created, updated) VALUES (?, ?, ?, ?, UTC_TIMESTAMP(), UTC_TIMESTAMP())`
 
-	_, err = m.DB.Exec(stmt, name, email, string(hashedPassword), role)
+	_, err = m.DB.Exec(
+		stmt,
+		name,
+		email,
+		string(hashedPassword),
+		role,
+	)
 	if err != nil {
 		var mySQLError *mysql.MySQLError
-		if errors.As(err, &mySQLError) {
-			if mySQLError.Number == 1062 && strings.Contains(mySQLError.Message, "users_uc_email") {
+		if errors.As(
+			err,
+			&mySQLError,
+		) {
+			if mySQLError.Number == 1062 && strings.Contains(
+				mySQLError.Message,
+				"users_uc_email",
+			) {
 				return models.ErrDuplicateEmail
 			}
 		}
@@ -36,13 +50,28 @@ func (m *UserModel) Insert(name, email, password, role string) error {
 	return nil
 }
 
-func (m *UserModel) Get(id int) (*models.User, error) {
+func (m *UserModel) Get(id int) (
+	*models.User,
+	error,
+) {
 	u := &models.User{}
 
 	stmt := `SELECT id, name, email, created, active FROM users WHERE id = ?`
-	err := m.DB.QueryRow(stmt, id).Scan(&u.ID, &u.Name, &u.Email, &u.Created, &u.Active)
+	err := m.DB.QueryRow(
+		stmt,
+		id,
+	).Scan(
+		&u.ID,
+		&u.Name,
+		&u.Email,
+		&u.Created,
+		&u.Active,
+	)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
+		if errors.Is(
+			err,
+			sql.ErrNoRows,
+		) {
 			return nil, models.ErrNoRecord
 		} else {
 			return nil, err
@@ -52,36 +81,58 @@ func (m *UserModel) Get(id int) (*models.User, error) {
 	return u, nil
 }
 
-func (m *UserModel) Update(id int, currentPassword, newPassword string) error {
+func (m *UserModel) Update(
+	id int,
+	currentPassword, newPassword string,
+) error {
 	var hashedPassword []byte
-	stmt := "SELECT hashed_password FROM users WHERE id = ? AND active = TRUE"
-	row := m.DB.QueryRow(stmt, id)
+	stmt := `SELECT hashed_password FROM users WHERE id = ? AND active = TRUE`
+	row := m.DB.QueryRow(
+		stmt,
+		id,
+	)
 	err := row.Scan(&hashedPassword)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
+		if errors.Is(
+			err,
+			sql.ErrNoRows,
+		) {
 			return models.ErrInvalidCredentials
 		} else {
 			return err
 		}
 	}
 
-	err = bcrypt.CompareHashAndPassword(hashedPassword, []byte(currentPassword))
+	err = bcrypt.CompareHashAndPassword(
+		hashedPassword,
+		[]byte(currentPassword),
+	)
 	if err != nil {
-		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
+		if errors.Is(
+			err,
+			bcrypt.ErrMismatchedHashAndPassword,
+		) {
 			return models.ErrInvalidCredentials
 		} else {
 			return err
 		}
 	}
 
-	setPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), 12)
+	setPassword, err := bcrypt.GenerateFromPassword(
+		[]byte(newPassword),
+		12,
+	)
 	if err != nil {
 		return err
 	}
 
 	stmt = `UPDATE users SET hashed_password = ? WHERE id = ?`
 
-	_, err = m.DB.Exec(stmt, string(setPassword), id)
+	_, err = m.DB.Exec(
+		stmt,
+		string(setPassword),
+		id,
+	)
 	if err != nil {
 		return err
 	}
@@ -92,7 +143,10 @@ func (m *UserModel) Update(id int, currentPassword, newPassword string) error {
 func (m *UserModel) Delete(id int) error {
 	stmt := `DELETE FROM users WHERE id = ?`
 
-	_, err := m.DB.Exec(stmt, id)
+	_, err := m.DB.Exec(
+		stmt,
+		id,
+	)
 	if err != nil {
 		return err
 	}
@@ -100,24 +154,42 @@ func (m *UserModel) Delete(id int) error {
 	return nil
 }
 
-func (m *UserModel) Authenticate(email, password string) (int, error) {
+func (m *UserModel) Authenticate(email, password string) (
+	int,
+	error,
+) {
 	var id int
 	var hashedPassword []byte
 
-	stmt := "SELECT id, hashed_password FROM users WHERE email = ? AND active = TRUE"
-	row := m.DB.QueryRow(stmt, email)
-	err := row.Scan(&id, &hashedPassword)
+	stmt := `SELECT id, hashed_password FROM users WHERE email = ? AND active = TRUE`
+	row := m.DB.QueryRow(
+		stmt,
+		email,
+	)
+	err := row.Scan(
+		&id,
+		&hashedPassword,
+	)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
+		if errors.Is(
+			err,
+			sql.ErrNoRows,
+		) {
 			return 0, models.ErrInvalidCredentials
 		} else {
 			return 0, err
 		}
 	}
 
-	err = bcrypt.CompareHashAndPassword(hashedPassword, []byte(password))
+	err = bcrypt.CompareHashAndPassword(
+		hashedPassword,
+		[]byte(password),
+	)
 	if err != nil {
-		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
+		if errors.Is(
+			err,
+			bcrypt.ErrMismatchedHashAndPassword,
+		) {
 			return 0, models.ErrInvalidCredentials
 		} else {
 			return 0, err
