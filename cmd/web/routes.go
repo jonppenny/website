@@ -24,7 +24,7 @@ func (app *application) routes() http.Handler {
 		"/",
 		dynamicMiddleware.ThenFunc(app.home),
 	)
-	//mux.Get("/about", dynamicMiddleware.ThenFunc(app.about))
+	// mux.Get("/about", dynamicMiddleware.ThenFunc(app.about))
 
 	mux.Get(
 		"/post/:id",
@@ -32,8 +32,8 @@ func (app *application) routes() http.Handler {
 	)
 
 	// Registration (disable for now).
-	//mux.Get("/user/signup", dynamicMiddleware.ThenFunc(app.signupUserForm))
-	//mux.Post("/user/signup", dynamicMiddleware.ThenFunc(app.signupUser))
+	// mux.Get("/user/signup", dynamicMiddleware.ThenFunc(app.signupUserForm))
+	// mux.Post("/user/signup", dynamicMiddleware.ThenFunc(app.signupUser))
 
 	// User authentication.
 	mux.Get(
@@ -59,8 +59,8 @@ func (app *application) routes() http.Handler {
 		dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.createPost),
 	)
 
-	//mux.Get("/admin/page/create", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.createPageForm))
-	//mux.Post("/admin/page/create", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.createPage))
+	// mux.Get("/admin/page/create", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.createPageForm))
+	// mux.Post("/admin/page/create", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.createPage))
 
 	mux.Get(
 		"/admin/user/profile",
