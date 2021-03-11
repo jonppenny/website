@@ -28,33 +28,13 @@ type application struct {
 }
 
 func main() {
-	addr := flag.String(
-		"addr",
-		":4000",
-		"HTTP network address",
-	)
-	dsn := flag.String(
-		"dsn",
-		"usr:pwd@/db?parseTime=true",
-		"MySQL data source name",
-	)
-	secret := flag.String(
-		"secret",
-		"s6Ndh+pPbnzHbS*+9Pk8qGWhTzbpa@ge",
-		"Secret Key",
-	)
+	addr := flag.String("addr", ":4000", "HTTP network address")
+	dsn := flag.String("dsn", "usr:pwd@/db?parseTime=true", "MySQL data source name")
+	secret := flag.String("secret", "s6Ndh+pPbnzHbS*+9Pk8qGWhTzbpa@ge", "Secret Key")
 	flag.Parse()
 
-	infoLog := log.New(
-		os.Stdout,
-		"INFO\t",
-		log.Ldate|log.Ltime,
-	)
-	errorLog := log.New(
-		os.Stderr,
-		"ERROR\t",
-		log.Ltime|log.Lshortfile,
-	)
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	errorLog := log.New(os.Stderr, "ERROR\t", log.Ltime|log.Lshortfile)
 
 	db, err := openDB(*dsn)
 	if err != nil {
@@ -99,25 +79,13 @@ func main() {
 		WriteTimeout: 10 * time.Second,
 	}
 
-	infoLog.Printf(
-		"Starting server on %s",
-		*addr,
-	)
-	err = srv.ListenAndServeTLS(
-		"",
-		"",
-	)
+	infoLog.Printf("Starting server on %s", *addr)
+	err = srv.ListenAndServeTLS("", "")
 	errorLog.Fatal(err)
 }
 
-func openDB(dsn string) (
-	*sql.DB,
-	error,
-) {
-	db, err := sql.Open(
-		"mysql",
-		dsn,
-	)
+func openDB(dsn string) (*sql.DB, error) {
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		return nil, err
 	}
