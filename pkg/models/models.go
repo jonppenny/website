@@ -45,7 +45,7 @@ type Post struct {
 
 type User struct {
 	ID             int
-	Name           string
+	Username       string
 	Email          string
 	HashedPassword []byte
 	LastLogin      time.Time
