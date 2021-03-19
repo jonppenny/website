@@ -1,28 +1,10 @@
-package main
+package templates
 
 import (
 	"html/template"
-	"jonppenny.co.uk/website/pkg/forms"
-	"jonppenny.co.uk/website/pkg/models"
 	"path/filepath"
 	"time"
 )
-
-type templateData struct {
-	CSRFToken       string
-	CurrentYear     int
-	Flash           string
-	Form            *forms.Form
-	IsAuthenticated bool
-	Post            *models.Post
-	Page            *models.Page
-	User            *models.User
-	MediaItem       *models.Media
-	Posts           []*models.Post
-	Pages           []*models.Page
-	Users           []*models.User
-	MediaItems      []*models.Media
-}
 
 func humanDate(t time.Time) string {
 	return t.Format("02 Jan 2006 at 15:04")
@@ -30,7 +12,7 @@ func humanDate(t time.Time) string {
 
 var functions = template.FuncMap{"humanDate": humanDate}
 
-func newTemplateCache(dir string) (map[string]*template.Template, error) {
+func NewTemplateCache(dir string) (map[string]*template.Template, error) {
 	cache := map[string]*template.Template{}
 
 	pages, err := filepath.Glob(filepath.Join(dir, "*.page.tmpl"))

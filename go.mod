@@ -1,4 +1,4 @@
-module jonppenny.co.uk/website
+module jonppenny.co.uk/webapp
 
 go 1.15
 
@@ -8,5 +8,6 @@ require (
 	github.com/golangcollege/sessions v1.2.0
 	github.com/justinas/alice v1.2.0
 	github.com/justinas/nosurf v1.1.1
+	github.com/spf13/viper v1.7.1
 	golang.org/x/crypto v0.0.0-20201208171446-5f87f3452ae9
 )

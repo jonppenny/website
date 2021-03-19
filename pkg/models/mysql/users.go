@@ -5,7 +5,7 @@ import (
 	"errors"
 	"github.com/go-sql-driver/mysql"
 	"golang.org/x/crypto/bcrypt"
-	"jonppenny.co.uk/website/pkg/models"
+	"jonppenny.co.uk/webapp/pkg/models"
 	"strings"
 )
 

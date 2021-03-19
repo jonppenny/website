@@ -3,7 +3,7 @@ package mysql
 import (
 	"database/sql"
 	"errors"
-	"jonppenny.co.uk/website/pkg/models"
+	"jonppenny.co.uk/webapp/pkg/models"
 )
 
 type PostModel struct {

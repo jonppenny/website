@@ -4,10 +4,13 @@ import (
 	"crypto/tls"
 	"database/sql"
 	"flag"
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golangcollege/sessions"
+	"github.com/spf13/viper"
 	"html/template"
-	"jonppenny.co.uk/website/pkg/models/mysql"
+	"jonppenny.co.uk/webapp/internal/templates"
+	"jonppenny.co.uk/webapp/pkg/models/mysql"
 	"log"
 	"net/http"
 	"os"
@@ -19,30 +22,51 @@ type contextKey string
 const contextKeyIsAuthenticated = contextKey("isAuthenticated")
 
 type application struct {
-	errorLog      *log.Logger
-	infoLog       *log.Logger
-	session       *sessions.Session
-	posts         *mysql.PostModel
-	templateCache map[string]*template.Template
-	users         *mysql.UserModel
+	errorLog           *log.Logger
+	infoLog            *log.Logger
+	session            *sessions.Session
+	posts              *mysql.PostModel
+	templateCache      map[string]*template.Template
+	adminTemplateCache map[string]*template.Template
+	users              *mysql.UserModel
 }
 
 func main() {
-	addr := flag.String("addr", ":4000", "HTTP network address")
-	dsn := flag.String("dsn", "usr:pwd@/db?parseTime=true", "MySQL data source name")
+	addr := flag.String("addr", ":9990", "HTTP network address")
+	// dsn := flag.String("dsn", "usr:pwd@/db?parseTime=true", "MySQL data source name")
 	secret := flag.String("secret", "s6Ndh+pPbnzHbS*+9Pk8qGWhTzbpa@ge", "Secret Key")
+	config := flag.String("config", "config.yaml", "Config file for default settings.")
 	flag.Parse()
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ltime|log.Lshortfile)
 
-	db, err := openDB(*dsn)
+	viper.SetConfigFile(*config)
+	err := viper.ReadInConfig()
+	if err != nil {
+		errorLog.Fatal(err)
+	}
+
+	dsn := fmt.Sprintf(
+		"%s:%s@%s(%s)/%s",
+		viper.Get("username").(string),
+		viper.Get("password"),
+		viper.Get("protocol"),
+		viper.Get("host"),
+		viper.Get("database"),
+	)
+	db, err := openDB(dsn)
 	if err != nil {
 		errorLog.Fatal(err)
 	}
 	defer db.Close()
 
-	templateCache, err := newTemplateCache("./ui/html/")
+	templateCache, err := templates.NewTemplateCache("./web/html/webapp")
+	if err != nil {
+		errorLog.Fatal(err)
+	}
+
+	adminTemplateCache, err := templates.NewTemplateCache("./web/html/admin")
 	if err != nil {
 		errorLog.Fatal(err)
 	}
@@ -53,12 +77,13 @@ func main() {
 	session.SameSite = http.SameSiteStrictMode
 
 	app := &application{
-		errorLog:      errorLog,
-		infoLog:       infoLog,
-		session:       session,
-		posts:         &mysql.PostModel{DB: db},
-		templateCache: templateCache,
-		users:         &mysql.UserModel{DB: db},
+		errorLog:           errorLog,
+		infoLog:            infoLog,
+		session:            session,
+		posts:              &mysql.PostModel{DB: db},
+		templateCache:      templateCache,
+		adminTemplateCache: adminTemplateCache,
+		users:              &mysql.UserModel{DB: db},
 	}
 
 	tlsConfig := &tls.Config{
@@ -80,7 +105,7 @@ func main() {
 	}
 
 	infoLog.Printf("Starting server on %s", *addr)
-	err = srv.ListenAndServeTLS("", "")
+	err = srv.ListenAndServe()
 	errorLog.Fatal(err)
 }
 

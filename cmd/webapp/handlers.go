@@ -6,10 +6,11 @@ import (
 	"net/http"
 	"strconv"
 
-	"jonppenny.co.uk/website/pkg/forms"
-	"jonppenny.co.uk/website/pkg/models"
+	"jonppenny.co.uk/webapp/pkg/forms"
+	"jonppenny.co.uk/webapp/pkg/models"
 )
 
+// Website Section.
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	p, err := app.posts.Latest()
 	if err != nil {
@@ -17,7 +18,11 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.render(w, r, "home.page.tmpl", &templateData{Posts: p})
+	app.render(w, r, "home.page.tmpl", &templateData{Posts: p}, false)
+}
+
+func (app *application) about(w http.ResponseWriter, r *http.Request) {
+	app.render(w, r, "about.page.tmpl", nil, false)
 }
 
 func (app *application) showPost(w http.ResponseWriter, r *http.Request) {
@@ -37,11 +42,16 @@ func (app *application) showPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.render(w, r, "show.page.tmpl", &templateData{Post: s})
+	app.render(w, r, "show.page.tmpl", &templateData{Post: s}, false)
+}
+
+// Admin Section.
+func (app *application) admin(w http.ResponseWriter, r *http.Request) {
+	app.render(w, r, "admin.page.tmpl", nil, true)
 }
 
 func (app *application) createPostForm(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, "create.page.tmpl", &templateData{Form: forms.New(nil)})
+	app.render(w, r, "create.page.tmpl", &templateData{Form: forms.New(nil)}, true)
 }
 
 func (app *application) createPost(w http.ResponseWriter, r *http.Request) {
@@ -57,7 +67,7 @@ func (app *application) createPost(w http.ResponseWriter, r *http.Request) {
 	form.PermittedValues("expires", "365", "7", "1")
 
 	if !form.Valid() {
-		app.render(w, r, "create.page.tmpl", &templateData{Form: form})
+		app.render(w, r, "create.page.tmpl", &templateData{Form: form}, true)
 		return
 	}
 
@@ -73,7 +83,7 @@ func (app *application) createPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) loginUserForm(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, "login.page.tmpl", &templateData{Form: forms.New(nil)})
+	app.render(w, r, "login.page.tmpl", &templateData{Form: forms.New(nil)}, true)
 }
 
 func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
@@ -91,7 +101,7 @@ func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
 				"generic",
 				"Email or Password is incorrect",
 			)
-			app.render(w, r, "login.page.tmpl", &templateData{Form: form})
+			app.render(w, r, "login.page.tmpl", &templateData{Form: form}, true)
 		} else {
 			app.serverError(w, err)
 		}
@@ -118,11 +128,11 @@ func (app *application) userProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.render(w, r, "profile.page.tmpl", &templateData{User: user})
+	app.render(w, r, "profile.page.tmpl", &templateData{User: user}, true)
 }
 
 func (app *application) changePasswordForm(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, "password.page.tmpl", &templateData{Form: forms.New(nil)})
+	app.render(w, r, "password.page.tmpl", &templateData{Form: forms.New(nil)}, true)
 }
 
 func (app *application) changePassword(w http.ResponseWriter, r *http.Request) {
@@ -140,7 +150,7 @@ func (app *application) changePassword(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !form.Valid() {
-		app.render(w, r, "password.page.tmpl", &templateData{Form: form})
+		app.render(w, r, "password.page.tmpl", &templateData{Form: form}, true)
 		return
 	}
 
@@ -150,7 +160,7 @@ func (app *application) changePassword(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if errors.Is(err, models.ErrInvalidCredentials) {
 			form.Errors.Add("generic", "Current Password is incorrect")
-			app.render(w, r, "password.page.tmpl", &templateData{Form: form})
+			app.render(w, r, "password.page.tmpl", &templateData{Form: form}, true)
 		} else {
 			app.serverError(w, err)
 		}

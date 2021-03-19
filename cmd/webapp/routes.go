@@ -13,7 +13,7 @@ func (app *application) routes() http.Handler {
 
 	mux := pat.New()
 	mux.Get("/", dynamicMiddleware.ThenFunc(app.home))
-	// mux.Get("/about", dynamicMiddleware.ThenFunc(app.about))
+	mux.Get("/about", dynamicMiddleware.ThenFunc(app.about))
 
 	mux.Get("/post/:id", dynamicMiddleware.ThenFunc(app.showPost))
 
@@ -27,6 +27,8 @@ func (app *application) routes() http.Handler {
 	mux.Post("/user/logout", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.logoutUser))
 
 	// Admin section.
+	mux.Get("/admin", dynamicMiddleware.ThenFunc(app.admin))
+
 	mux.Get("/admin/post/create", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.createPostForm))
 	mux.Post("/admin/post/create", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.createPost))
 
@@ -38,7 +40,7 @@ func (app *application) routes() http.Handler {
 	mux.Post("/admin/user/change-password", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.changePassword))
 
 	// Static files.
-	fileServer := http.FileServer(http.Dir("./ui/static/"))
+	fileServer := http.FileServer(http.Dir("./web/static/"))
 	mux.Get("/static/", http.StripPrefix("/static", fileServer))
 
 	return standardMiddleware.Then(mux)
