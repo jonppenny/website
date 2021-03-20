@@ -45,8 +45,6 @@ func main() {
 		errorLog.Fatal(err)
 	}
 
-	secret := viper.Get("secret").(string)
-
 	dsn := fmt.Sprintf(
 		"%s:%s@%s(%s)/%s",
 		viper.Get("username"),
@@ -71,7 +69,7 @@ func main() {
 		errorLog.Fatal(err)
 	}
 
-	session := sessions.New([]byte(secret))
+	session := sessions.New([]byte(viper.Get("secret").(string)))
 	session.Lifetime = 12 * time.Hour
 	session.Secure = true
 	session.SameSite = http.SameSiteStrictMode
