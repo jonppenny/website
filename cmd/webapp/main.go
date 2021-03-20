@@ -33,8 +33,6 @@ type application struct {
 
 func main() {
 	addr := flag.String("addr", ":9990", "HTTP network address")
-	// dsn := flag.String("dsn", "usr:pwd@/db?parseTime=true", "MySQL data source name")
-	secret := flag.String("secret", "s6Ndh+pPbnzHbS*+9Pk8qGWhTzbpa@ge", "Secret Key")
 	config := flag.String("config", "config.yaml", "Config file for default settings.")
 	flag.Parse()
 
@@ -47,9 +45,11 @@ func main() {
 		errorLog.Fatal(err)
 	}
 
+	secret := viper.Get("secret").(string)
+
 	dsn := fmt.Sprintf(
 		"%s:%s@%s(%s)/%s",
-		viper.Get("username").(string),
+		viper.Get("username"),
 		viper.Get("password"),
 		viper.Get("protocol"),
 		viper.Get("host"),
@@ -71,7 +71,7 @@ func main() {
 		errorLog.Fatal(err)
 	}
 
-	session := sessions.New([]byte(*secret))
+	session := sessions.New([]byte(secret))
 	session.Lifetime = 12 * time.Hour
 	session.Secure = true
 	session.SameSite = http.SameSiteStrictMode
