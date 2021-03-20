@@ -13,15 +13,15 @@ type UserModel struct {
 	DB *sql.DB
 }
 
-func (m *UserModel) Insert(name, email, password, role string) error {
+func (m *UserModel) Insert(username, email, password, role string) error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 12)
 	if err != nil {
 		return err
 	}
 
-	stmt := `INSERT INTO users (name, email, hashed_password, role, created, updated) VALUES (?, ?, ?, ?, UTC_TIMESTAMP(), UTC_TIMESTAMP())`
+	stmt := `INSERT INTO users (username, email, hashed_password, role, last_login, created, updated) VALUES (?, ?, ?, ?, UTC_TIMESTAMP(), UTC_TIMESTAMP(), UTC_TIMESTAMP())`
 
-	_, err = m.DB.Exec(stmt, name, email, string(hashedPassword), role)
+	_, err = m.DB.Exec(stmt, username, email, string(hashedPassword), role)
 	if err != nil {
 		var mySQLError *mysql.MySQLError
 		if errors.As(
@@ -41,7 +41,7 @@ func (m *UserModel) Insert(name, email, password, role string) error {
 func (m *UserModel) Get(id int) (*models.User, error) {
 	u := &models.User{}
 
-	stmt := `SELECT id, name, email, created, active FROM users WHERE id = ?`
+	stmt := `SELECT id, username, email, created, active FROM users WHERE id = ?`
 	err := m.DB.QueryRow(stmt, id).Scan(&u.ID, &u.Username, &u.Email, &u.Created, &u.Active)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -124,6 +124,12 @@ func (m *UserModel) Authenticate(email, password string) (int, error) {
 		} else {
 			return 0, err
 		}
+	}
+
+	stmt = `UPDATE users SET last_login = UTC_TIMESTAMP() WHERE email = ?`
+	_, err = m.DB.Exec(stmt, email)
+	if err != nil {
+		return 0, err
 	}
 
 	return id, nil

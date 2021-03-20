@@ -1,39 +1,35 @@
 {{template "base" .}}
 {{define "main"}}
-<section class="py-4">
-    <div class="container">
-        <div class="row">
-            <div class="col-12 col-lg-8">
-                <h1>About me</h1>
-                <p><a href="https://www.youtube.com/watch?v=rEq1Z0bjdwc" target="_blank">Hello There!</a></p>
-                <p>I'm Jon, a senior Software Engineer. With over 16 years of experience building websites/apps in PHP,
-                    JavaScript, and some .Net.</p>
-                <p>I've built software in Drupal, Symfony, Laravel, WordPress, NodeJS and Cordova. I've used front end
-                    frameworks such as Bootstrap, Skeleton and Foundation.</p>
-                <p>I've built software for companies including Dyson, BBC, Disney, Nickelodeon/NickJr, Cartoon Network,
-                    DHX Media and Penguin.</p>
-                <p>I also work in basic to mid level dev ops with experience managing Linux (CentOS, Debian and Ubuntu)
-                    as well as Windows (2008, 2016 and 2019) servers.</p>
-                <p>I'm currently learning GO (this web app is the first site deployed in GO) and Rust. The site is
-                    pretty bare bones, currently but I'm working on a mini CMS. You can follow the progress over on <a
-                            href="https://github.com/jonppenny/website" target="_blank">Github</a>.</p>
-                <p>I also like to dable with hardware, with my last few home PC's being built myself. </p>
-                <h2>Non tech stuff</h2>
-                <p>When not working with tech I'm usually found at a gig/festival, any shop that sells vinyl or kick
-                    boxing/grappling at the gym. A follower of <a href="https://ponty.net" target="_blank">Pontypridd
-                        RFC</a>, I go to most matches each weekend.</p>
-                <p>Also like a good hike off in nature somewhere.</p>
-                <h2>About this site</h2>
-                <p>The nerdy stuff. This site is written in <a href="//golang.org" target="_blank">GO</a> using GO's
-                    built in templating engine. The site is hosted on a <a href="//digitalocean.com" target="_blank">Digital
-                        Ocean</a> Ubuntu Droplet via an Nginx proxy to the GO app. SSL cert is provided by <a
-                            href="//letsencrypt.org" target="_blank">Let's Encrypt</a>. (Who else?)</p>
-            </div>
-            <div class="col-12 col-lg-4 d-none d-lg-block">
-                <img src="../../static/img/me3.jpg" alt="Me" width="100%"
-                     style="border-radius: 50%;border: 2px solid #000;"/>
-            </div>
+<div class="container pb-4">
+    <div class="row">
+        <div class="col-12">
+            <h1>Welcome!</h1>
         </div>
     </div>
-</section>
+</div>
+
+<div class="container">
+    <div class="row">
+        {{if .Posts}}
+        {{range .Posts}}
+        <div class="col-4">
+            <div class="card">
+                <div class="card-body">
+                    <h2><a href='/post/{{.ID}}'>{{.Title}}</a></h2>
+                    <span>Posted on: {{humanDate .Created}}</span>
+                    <hr>
+                    <div>
+                        <a class="btn btn-secondary" href='/post/{{.ID}}'>Read More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{end}}
+        {{else}}
+        <div class="col-12">
+            <p>There's nothing to see here... yet!</p>
+        </div>
+        {{end}}
+    </div>
+</div>
 {{end}}

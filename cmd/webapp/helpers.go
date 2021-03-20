@@ -34,17 +34,28 @@ func (app *application) addDefaultData(td *templateData, r *http.Request) *templ
 	return td
 }
 
-func (app *application) render(w http.ResponseWriter, r *http.Request, name string, td *templateData, isAdmin bool) {
+func (app *application) render(w http.ResponseWriter, r *http.Request, name string, td *templateData, isAdmin, isCredentials bool) {
 	buf := new(bytes.Buffer)
 
 	if isAdmin {
 		adminTemplates, ok := app.adminTemplateCache[name]
 		if !ok {
-			app.serverError(w, fmt.Errorf("the template %s does not exist.", name))
+			app.serverError(w, fmt.Errorf("the template %s does not exist in admin.", name))
 			return
 		}
 
 		err := adminTemplates.Execute(buf, app.addDefaultData(td, r))
+		if err != nil {
+			app.serverError(w, err)
+		}
+	} else if isCredentials {
+		credentialsTemplates, ok := app.credentialsTemplateCache[name]
+		if !ok {
+			app.serverError(w, fmt.Errorf("the template %s does not exist in credentials.", name))
+			return
+		}
+
+		err := credentialsTemplates.Execute(buf, app.addDefaultData(td, r))
 		if err != nil {
 			app.serverError(w, err)
 		}

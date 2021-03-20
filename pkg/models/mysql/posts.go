@@ -79,7 +79,7 @@ func (m *PostModel) Latest() ([]*models.Post, error) {
 	for rows.Next() {
 		s := &models.Post{}
 
-		err = rows.Scan(&s.ID, &s.Title, &s.Content, &s.Created)
+		err = rows.Scan(&s.ID, &s.Title, &s.Content, &s.Created, &s.Updated)
 		if err != nil {
 			return nil, err
 		}

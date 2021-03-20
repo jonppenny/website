@@ -1,0 +1,43 @@
+{{template "base" .}}
+
+{{define "title"}}Create a New Post{{end}}
+
+{{define "main"}}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <form action='/admin/post/create' method='POST'>
+                <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
+                {{with .Form}}
+                <div class="form-group">
+                    <label>Title:</label>
+                    {{with .Errors.Get "title"}}
+                    <label class='error'>{{.}}</label>
+                    {{end}}
+                    <input class="form-control" type='text' name='title' value='{{.Get "title"}}'>
+                </div>
+                <div class="form-group">
+                    <label>Content:</label>
+                    {{with .Errors.Get "content"}}
+                    <label class='error'>{{.}}</label>
+                    {{end}}
+                    <textarea class="form-control" name='content'>{{.Get "content"}}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="exampleFormControlSelect1">Example select</label>
+                    {{$status := or (.Get "status") ""}}
+                    <select class="form-control" id="exampleFormControlSelect1" name="status">
+                        <option value="">Please select...</option>
+                        <option value="published" {{if (eq $status "published")}}selected{{end}}>Published</option>
+                        <option value="draft" {{if (eq $status "draft")}}selected{{end}}>Draft</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input type='submit' value='Publish post' class="btn btn-primary">
+                </div>
+                {{end}}
+            </form>
+        </div>
+    </div>
+</div>
+{{end}}

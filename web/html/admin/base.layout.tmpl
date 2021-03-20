@@ -19,7 +19,7 @@
             crossorigin="anonymous"></script>
 </head>
 <body>
-<header class="py-4">
+<header class="pb-4">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <span class="navbar-brand" href="#">Jon P Penny</span>
         <button class="navbar-toggler" type="button" data-toggle="collapse"
@@ -38,7 +38,7 @@
                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Posts</a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="/admin/posts">View</a>
-                        <a class="dropdown-item" href="/admin/posts/add">Create</a>
+                        <a class="dropdown-item" href="/admin/post/create">Create</a>
                     </div>
                 </li>
                 <li class="nav-item">
@@ -48,7 +48,7 @@
         </div>
     </nav>
 </header>
-<main>
+<main class="py-4">
     {{template "main" .}}
 </main>
 {{template "footer" .}}

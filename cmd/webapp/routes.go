@@ -17,20 +17,25 @@ func (app *application) routes() http.Handler {
 
 	mux.Get("/post/:id", dynamicMiddleware.ThenFunc(app.showPost))
 
-	// Registration (disable for now).
-	// mux.Get("/user/signup", dynamicMiddleware.ThenFunc(app.signupUserForm))
-	// mux.Post("/user/signup", dynamicMiddleware.ThenFunc(app.signupUser))
+	// Registration.
+	mux.Get("/user/register", dynamicMiddleware.ThenFunc(app.registerUserForm))
+	mux.Post("/user/register", dynamicMiddleware.ThenFunc(app.registerUser))
 
 	// User authentication.
 	mux.Get("/user/login", dynamicMiddleware.ThenFunc(app.loginUserForm))
 	mux.Post("/user/login", dynamicMiddleware.ThenFunc(app.loginUser))
 	mux.Post("/user/logout", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.logoutUser))
 
-	// Admin section.
-	mux.Get("/admin", dynamicMiddleware.ThenFunc(app.admin))
+	/*
+	 * Admin section.
+	 */
+	mux.Get("/admin", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.dashboard))
 
-	mux.Get("/admin/post/create", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.createPostForm))
-	mux.Post("/admin/post/create", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.createPost))
+	mux.Get("/admin/posts", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.dashboardAllPosts))
+	mux.Get("/admin/post/create", dynamicMiddleware.ThenFunc(app.dashboardCreatePostForm))
+	mux.Post("/admin/post/create", dynamicMiddleware.ThenFunc(app.dashboardCreatePost))
+	mux.Get("/admin/post/:id", dynamicMiddleware.ThenFunc(app.dashboardUpdatePostForm))
+	mux.Post("/admin/post/:id", dynamicMiddleware.ThenFunc(app.dashboardUpdatePost))
 
 	// mux.Get("/admin/page/create", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.createPageForm))
 	// mux.Post("/admin/page/create", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.createPage))

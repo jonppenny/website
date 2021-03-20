@@ -22,13 +22,14 @@ type contextKey string
 const contextKeyIsAuthenticated = contextKey("isAuthenticated")
 
 type application struct {
-	errorLog           *log.Logger
-	infoLog            *log.Logger
-	session            *sessions.Session
-	posts              *mysql.PostModel
-	templateCache      map[string]*template.Template
-	adminTemplateCache map[string]*template.Template
-	users              *mysql.UserModel
+	errorLog                 *log.Logger
+	infoLog                  *log.Logger
+	session                  *sessions.Session
+	posts                    *mysql.PostModel
+	templateCache            map[string]*template.Template
+	adminTemplateCache       map[string]*template.Template
+	credentialsTemplateCache map[string]*template.Template
+	users                    *mysql.UserModel
 }
 
 func main() {
@@ -46,11 +47,9 @@ func main() {
 	}
 
 	dsn := fmt.Sprintf(
-		"%s:%s@%s(%s)/%s",
+		"%s:%s@/%s?parseTime=true",
 		viper.Get("username"),
 		viper.Get("password"),
-		viper.Get("protocol"),
-		viper.Get("host"),
 		viper.Get("database"),
 	)
 	db, err := openDB(dsn)
@@ -69,19 +68,25 @@ func main() {
 		errorLog.Fatal(err)
 	}
 
+	credentialsTemplateCache, err := templates.NewTemplateCache("./web/html/credentials")
+	if err != nil {
+		errorLog.Fatal(err)
+	}
+
 	session := sessions.New([]byte(viper.Get("secret").(string)))
 	session.Lifetime = 12 * time.Hour
 	session.Secure = true
 	session.SameSite = http.SameSiteStrictMode
 
 	app := &application{
-		errorLog:           errorLog,
-		infoLog:            infoLog,
-		session:            session,
-		posts:              &mysql.PostModel{DB: db},
-		templateCache:      templateCache,
-		adminTemplateCache: adminTemplateCache,
-		users:              &mysql.UserModel{DB: db},
+		errorLog:                 errorLog,
+		infoLog:                  infoLog,
+		session:                  session,
+		posts:                    &mysql.PostModel{DB: db},
+		templateCache:            templateCache,
+		adminTemplateCache:       adminTemplateCache,
+		credentialsTemplateCache: credentialsTemplateCache,
+		users:                    &mysql.UserModel{DB: db},
 	}
 
 	tlsConfig := &tls.Config{
