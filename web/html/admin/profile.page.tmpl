@@ -1,0 +1,33 @@
+{{template "base" .}}
+
+{{define "title"}}My Profile{{end}}
+
+{{define "main"}}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1>User Profile</h1>
+            {{with .User}}
+             <table class="table">
+                <tr>
+                    <th>Username</th>
+                    <td>{{.Username}}</td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td>{{.Email}}</td>
+                </tr>
+                <tr>
+                    <th>Joined</th>
+                    <td>{{humanDate .Created}}</td>
+                </tr>
+                <tr>
+                    <th>Password</th>
+                    <td><a href="/admin/change-password">Change password</a></td>
+                </tr>
+            </table>
+            {{end }}
+        </div>
+    </div>
+</div>
+{{end}}

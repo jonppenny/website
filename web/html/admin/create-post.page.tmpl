@@ -5,7 +5,7 @@
 {{define "main"}}
 <div class="container-fluid">
     <div class="row">
-        <div class="col-12">
+        <div class="col-8">
             <form action='/admin/post/create' method='POST'>
                 <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
                 {{with .Form}}

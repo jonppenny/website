@@ -40,9 +40,9 @@ func (app *application) routes() http.Handler {
 	// mux.Get("/admin/page/create", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.createPageForm))
 	// mux.Post("/admin/page/create", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.createPage))
 
-	mux.Get("/admin/user/profile", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.userProfile))
-	mux.Get("/admin/user/change-password", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.changePasswordForm))
-	mux.Post("/admin/user/change-password", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.changePassword))
+	mux.Get("/admin/profile", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.userProfile))
+	mux.Get("/admin/change-password", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.changePasswordForm))
+	mux.Post("/admin/change-password", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.changePassword))
 
 	// Static files.
 	fileServer := http.FileServer(http.Dir("./web/static/"))
