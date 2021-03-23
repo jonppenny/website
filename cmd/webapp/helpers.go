@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/justinas/nosurf"
+	"log"
 	"net/http"
 	"runtime/debug"
 	"time"
@@ -11,7 +12,10 @@ import (
 
 func (app *application) serverError(w http.ResponseWriter, err error) {
 	trace := fmt.Sprintf("%s\n%s", err.Error(), debug.Stack())
-	app.errorLog.Output(2, trace)
+	err = app.errorLog.Output(2, trace)
+	if err != nil {
+		log.Fatal(err)
+	}
 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }
 
@@ -40,7 +44,7 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 	if isAdmin {
 		adminTemplates, ok := app.adminTemplateCache[name]
 		if !ok {
-			app.serverError(w, fmt.Errorf("the template %s does not exist in admin.", name))
+			app.serverError(w, fmt.Errorf("the template %s does not exist in admin", name))
 			return
 		}
 
@@ -51,7 +55,7 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 	} else if isCredentials {
 		credentialsTemplates, ok := app.credentialsTemplateCache[name]
 		if !ok {
-			app.serverError(w, fmt.Errorf("the template %s does not exist in credentials.", name))
+			app.serverError(w, fmt.Errorf("the template %s does not exist in credentials", name))
 			return
 		}
 
@@ -62,7 +66,7 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 	} else {
 		websiteTemplates, ok := app.templateCache[name]
 		if !ok {
-			app.serverError(w, fmt.Errorf("the template %s does not exist.", name))
+			app.serverError(w, fmt.Errorf("the template %s does not exist", name))
 			return
 		}
 
@@ -72,7 +76,10 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 		}
 	}
 
-	buf.WriteTo(w)
+	_, err := buf.WriteTo(w)
+	if err != nil {
+		app.serverError(w, err)
+	}
 }
 
 func (app *application) isAuthenticated(r *http.Request) bool {
