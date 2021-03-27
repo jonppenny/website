@@ -74,7 +74,7 @@ func (m *PostModel) Latest() ([]*models.Post, error) {
 
 	defer rows.Close()
 
-	posts := []*models.Post{}
+	var posts []*models.Post
 
 	for rows.Next() {
 		s := &models.Post{}
