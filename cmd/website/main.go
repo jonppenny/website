@@ -26,10 +26,11 @@ type application struct {
 	infoLog                  *log.Logger
 	session                  *sessions.Session
 	posts                    *mysql.PostModel
+	pages                    *mysql.PageModel
+	users                    *mysql.UserModel
 	templateCache            map[string]*template.Template
 	adminTemplateCache       map[string]*template.Template
 	credentialsTemplateCache map[string]*template.Template
-	users                    *mysql.UserModel
 }
 
 func main() {
@@ -83,10 +84,11 @@ func main() {
 		infoLog:                  infoLog,
 		session:                  session,
 		posts:                    &mysql.PostModel{DB: db},
+		pages:                    &mysql.PageModel{DB: db},
+		users:                    &mysql.UserModel{DB: db},
 		templateCache:            templateCache,
 		adminTemplateCache:       adminTemplateCache,
 		credentialsTemplateCache: credentialsTemplateCache,
-		users:                    &mysql.UserModel{DB: db},
 	}
 
 	tlsConfig := &tls.Config{

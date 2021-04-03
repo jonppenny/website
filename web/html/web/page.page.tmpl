@@ -1,0 +1,19 @@
+{{template "base" .}}
+{{define "title"}}{{.Page.Title}}{{end}}
+{{define "main"}}
+{{with .Page}}
+<div class='container'>
+    <div class="row">
+        <div class="col-12">
+            <div class='metadata'>
+                <h1>{{.Title}}</h1>
+                <!--<span>Posted on: {{humanDate .Created}}</span>-->
+            </div>
+            <div>
+                {{.Content}}
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}
+{{end}}

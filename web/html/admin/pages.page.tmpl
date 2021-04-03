@@ -1,0 +1,32 @@
+{{template "base" .}}
+{{define "main"}}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1>Pages</h1>
+            {{if .Pages}}
+            <table class="table">
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Created</th>
+                    <th scope="col">Updated</th>
+                    <th></th>
+                </tr>
+                {{range .Pages}}
+                <tr>
+                    <th scope="row">#{{.ID}}</th>
+                    <td><a href='/admin/page/{{.ID}}'>{{.Title}}</a></td>
+                    <td>{{humanDate .Created}}</td>
+                    <td>{{humanDate .Updated}}</td>
+                    <td><a class="btn btn-link" href='/admin/page/{{.ID}}'>Edit</a></td>
+                </tr>
+                {{end}}
+            </table>
+            {{else}}
+            <p>There's nothing to see here... yet!</p>
+            {{end}}
+        </div>
+    </div>
+</div>
+{{end}}

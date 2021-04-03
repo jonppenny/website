@@ -45,6 +45,26 @@ func (app *application) showPost(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, "post.page.tmpl", &templateData{Post: s}, false, false)
 }
 
+func (app *application) showPage(w http.ResponseWriter, r *http.Request) {
+	slug := r.URL.Query().Get(":slug")
+	if slug == "" {
+		app.notFound(w)
+		return
+	}
+
+	p, err := app.pages.GetBySlug(slug)
+	if err != nil {
+		if errors.Is(err, models.ErrNoRecord) {
+			app.notFound(w)
+		} else {
+			app.serverError(w, err)
+		}
+		return
+	}
+
+	app.render(w, r, "page.page.tmpl", &templateData{Page: p}, false, false)
+}
+
 // Register section.
 func (app *application) registerUserForm(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, "register.page.tmpl", &templateData{
@@ -271,4 +291,94 @@ func (app *application) changePassword(w http.ResponseWriter, r *http.Request) {
 	app.session.Put(r, "flash", "Your password has been updated.")
 
 	http.Redirect(w, r, "/user/profile", http.StatusSeeOther)
+}
+
+func (app *application) dashboardAllPages(w http.ResponseWriter, r *http.Request) {
+	p, err := app.pages.GetAll()
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+	app.render(w, r, "pages.page.tmpl", &templateData{Pages: p}, true, false)
+}
+
+func (app *application) dashboardCreatePageForm(w http.ResponseWriter, r *http.Request) {
+	app.render(w, r, "create-page.page.tmpl", &templateData{Form: forms.New(nil)}, true, false)
+}
+
+func (app *application) dashboardCreatePage(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	form := forms.New(r.PostForm)
+	form.Required("title", "slug", "content")
+	form.MaxLength("title", 100)
+	form.PermittedValues("status", "published", "draft")
+
+	if !form.Valid() {
+		app.render(w, r, "create-page.page.tmpl", &templateData{Form: form}, true, false)
+		return
+	}
+
+	id, err := app.pages.Insert(form.Get("title"), form.Get("content"), form.Get("status"), form.Get("slug"))
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	app.session.Put(r, "flash", "Page created successfully.")
+
+	http.Redirect(w, r, fmt.Sprintf("/admin/page/%d", id), http.StatusSeeOther)
+}
+
+func (app *application) dashboardUpdatePageForm(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
+	if err != nil || id < 1 {
+		app.notFound(w)
+		return
+	}
+
+	p, err := app.pages.Get(id)
+	if err != nil {
+		if errors.Is(err, models.ErrNoRecord) {
+			app.notFound(w)
+		} else {
+			app.serverError(w, err)
+		}
+		return
+	}
+
+	app.render(w, r, "update-page.page.tmpl", &templateData{Form: forms.New(nil), Page: p}, true, false)
+}
+
+func (app *application) dashboardUpdatePage(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	form := forms.New(r.PostForm)
+	form.Required("title", "slug", "content")
+	form.MaxLength("title", 100)
+	form.PermittedValues("status", "published", "draft")
+
+	if !form.Valid() {
+		app.render(w, r, "update-page.page.tmpl", &templateData{Form: form}, true, false)
+		return
+	}
+
+	pid, _ := strconv.Atoi(form.Get("page_id"))
+	err = app.pages.Update(pid, form.Get("title"), form.Get("content"), form.Get("status"), form.Get("slug"))
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	app.session.Put(r, "flash", "Page updated successfully.")
+
+	http.Redirect(w, r, fmt.Sprintf("/admin/page/%d", pid), http.StatusSeeOther)
 }

@@ -12,10 +12,6 @@ func (app *application) routes() http.Handler {
 	dynamicMiddleware := alice.New(app.session.Enable, noSurf, app.authenticate)
 
 	mux := pat.New()
-	mux.Get("/", dynamicMiddleware.ThenFunc(app.home))
-	mux.Get("/about", dynamicMiddleware.ThenFunc(app.about))
-
-	mux.Get("/post/:id", dynamicMiddleware.ThenFunc(app.showPost))
 
 	// Registration.
 	mux.Get("/user/register", dynamicMiddleware.ThenFunc(app.registerUserForm))
@@ -26,9 +22,7 @@ func (app *application) routes() http.Handler {
 	mux.Post("/user/login", dynamicMiddleware.ThenFunc(app.loginUser))
 	mux.Post("/user/logout", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.logoutUser))
 
-	/*
-	 * Admin section.
-	 */
+	// Admin section.
 	mux.Get("/admin", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.dashboard))
 
 	mux.Get("/admin/posts", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.dashboardAllPosts))
@@ -37,8 +31,11 @@ func (app *application) routes() http.Handler {
 	mux.Get("/admin/post/:id", dynamicMiddleware.ThenFunc(app.dashboardUpdatePostForm))
 	mux.Post("/admin/post/:id", dynamicMiddleware.ThenFunc(app.dashboardUpdatePost))
 
-	// mux.Get("/admin/page/create", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.createPageForm))
-	// mux.Post("/admin/page/create", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.createPage))
+	mux.Get("/admin/pages", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.dashboardAllPages))
+	mux.Get("/admin/page/create", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.dashboardCreatePageForm))
+	mux.Post("/admin/page/create", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.dashboardCreatePage))
+	mux.Get("/admin/page/:id", dynamicMiddleware.ThenFunc(app.dashboardUpdatePageForm))
+	mux.Post("/admin/page/:id", dynamicMiddleware.ThenFunc(app.dashboardUpdatePage))
 
 	mux.Get("/admin/profile", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.userProfile))
 	mux.Get("/admin/change-password", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.changePasswordForm))
@@ -47,6 +44,16 @@ func (app *application) routes() http.Handler {
 	// Static files.
 	fileServer := http.FileServer(http.Dir("./web/static/"))
 	mux.Get("/static/", http.StripPrefix("/static", fileServer))
+
+	// Front end website.
+	mux.Get("/", dynamicMiddleware.ThenFunc(app.home))
+	// mux.Get("/about", dynamicMiddleware.ThenFunc(app.about))
+
+	mux.Get("/post/:id", dynamicMiddleware.ThenFunc(app.showPost))
+
+	// This route MUST be the last route in order to ensure any other routes
+	// statically declared are prioritised.
+	mux.Get("/:slug", dynamicMiddleware.ThenFunc(app.showPage))
 
 	return standardMiddleware.Then(mux)
 }
