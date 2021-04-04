@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"html/template"
 	"time"
 )
 
@@ -27,7 +28,7 @@ type Media struct {
 type Page struct {
 	ID      int
 	Title   string
-	Content string
+	Content template.HTML
 	Status  string
 	Slug    string
 	Created time.Time
@@ -37,7 +38,7 @@ type Page struct {
 type Post struct {
 	ID      int
 	Title   string
-	Content string
+	Content template.HTML
 	Status  string
 	Created time.Time
 	Updated time.Time

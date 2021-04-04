@@ -16,7 +16,7 @@
                 </div>
                 <div class="form-group">
                     <label>Content:</label>
-                    <textarea class="form-control" name='content'>{{.Content}}</textarea>
+                    <textarea id="content" class="form-control" name='content'>{{.Content}}</textarea>
                 </div>
                 <div class="form-group">
                     <label for="exampleFormControlSelect1">Post Status</label>
@@ -36,3 +36,10 @@
     </div>
 </div>
 {{end}}
+<script type="text/javascript">
+  ClassicEditor
+    .create(document.querySelector('#content'))
+    .catch(error => {
+      console.error(error)
+    })
+</script>
