@@ -2,13 +2,13 @@ package main
 
 import (
 	"crypto/tls"
-	"database/sql"
 	"flag"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golangcollege/sessions"
 	"github.com/spf13/viper"
 	"html/template"
+	"jonppenny.co.uk/webapp/internal/database"
 	"jonppenny.co.uk/webapp/internal/templates"
 	"jonppenny.co.uk/webapp/pkg/models/mysql"
 	"log"
@@ -53,7 +53,7 @@ func main() {
 		viper.Get("password"),
 		viper.Get("database"),
 	)
-	db, err := openDB(dsn)
+	db, err := database.OpenDB(dsn)
 	if err != nil {
 		errorLog.Fatal(err)
 	}
@@ -112,17 +112,4 @@ func main() {
 	infoLog.Printf("Starting server on %s", *addr)
 	err = srv.ListenAndServe()
 	errorLog.Fatal(err)
-}
-
-func openDB(dsn string) (*sql.DB, error) {
-	db, err := sql.Open("mysql", dsn)
-	if err != nil {
-		return nil, err
-	}
-
-	if err = db.Ping(); err != nil {
-		return nil, err
-	}
-
-	return db, nil
 }
