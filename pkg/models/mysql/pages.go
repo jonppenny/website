@@ -42,22 +42,6 @@ func (m *PageModel) Get(id int) (*models.Page, error) {
 	return p, nil
 }
 
-func (m *PageModel) GetBySlug(slug string) (*models.Page, error) {
-	p := &models.Page{}
-
-	stmt := `SELECT id, title, content, status, slug, created, updated FROM pages WHERE slug = ?`
-	err := m.DB.QueryRow(stmt, slug).Scan(&p.ID, &p.Title, &p.Content, &p.Status, &p.Slug, &p.Created, &p.Updated)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, models.ErrNoRecord
-		} else {
-			return nil, err
-		}
-	}
-
-	return p, nil
-}
-
 func (m *PageModel) Update(id int, title, content, status, slug string) error {
 	stmt := `UPDATE pages SET title = ?, content = ?, status = ?, slug = ?, updated = UTC_TIMESTAMP() WHERE id = ?`
 
@@ -108,4 +92,20 @@ func (m *PageModel) GetAll() ([]*models.Page, error) {
 	}
 
 	return pages, nil
+}
+
+func (m *PageModel) GetBySlug(slug string) (*models.Page, error) {
+	p := &models.Page{}
+
+	stmt := `SELECT id, title, content, status, slug, created, updated FROM pages WHERE slug = ?`
+	err := m.DB.QueryRow(stmt, slug).Scan(&p.ID, &p.Title, &p.Content, &p.Status, &p.Slug, &p.Created, &p.Updated)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, models.ErrNoRecord
+		} else {
+			return nil, err
+		}
+	}
+
+	return p, nil
 }
