@@ -1,7 +1,7 @@
 # Database Schema
 
 ## Posts
-``` sql
+```sql
 create table posts (
     id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(100) NOT NULL,
@@ -15,7 +15,7 @@ CREATE INDEX idx_posts_created ON posts(created);
 ```
 
 ## Pages
-``` sql
+```sql
 create table pages (
     id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(100) NOT NULL,
@@ -30,7 +30,7 @@ CREATE INDEX idx_pages_created ON pages(created);
 ```
 
 ## Users
-``` sql
+```sql
 CREATE TABLE users (
     id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(255) NOT NULL,
@@ -44,4 +44,17 @@ CREATE TABLE users (
 );
 
 ALTER TABLE users ADD CONSTRAINT users_uc_email UNIQUE (email);
+```
+
+## Menus
+```sql
+CREATE TABLE menus (
+    id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    item_ids JSON NOT NULL,
+    slug VARCHAR(255) NOT NULL,
+    created DATETIME NOT NULL,
+    updated DATETIME NOT NULL
+);
+
+ALTER TABLE menus ADD CONSTRAINT menus_uc_slug UNIQUE (slug);
 ```
