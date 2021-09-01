@@ -1,6 +1,5 @@
 username: ""
 password: ""
-protocol: "tcp"
-host: "localhost"
+host: "tcp(host:port)"
 database: ""
 secret: ""
