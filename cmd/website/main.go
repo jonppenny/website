@@ -48,9 +48,10 @@ func main() {
 	}
 
 	dsn := fmt.Sprintf(
-		"%s:%s@/%s?parseTime=true",
+		"%s:%s@%s/%s?parseTime=true",
 		viper.Get("username"),
 		viper.Get("password"),
+		viper.Get("host"),
 		viper.Get("database"),
 	)
 	db, err := database.OpenDB(dsn)
