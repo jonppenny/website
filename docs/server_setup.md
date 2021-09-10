@@ -21,3 +21,6 @@ WantedBy=multi-user.target
 ```
 
 Note the working directory line, this is required for static files.
+
+## Docker Container
+To run a Docker MySQL server, see [this link](https://phoenixnap.com/kb/mysql-docker-container).
