@@ -58,3 +58,21 @@ CREATE TABLE menus (
 
 ALTER TABLE menus ADD CONSTRAINT menus_uc_slug UNIQUE (slug);
 ```
+
+## Media
+```sql
+create table media (
+    id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    filename VARCHAR(255) NOT NULL,
+    path VARCHAR(255) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    width INT NOT NULL,
+    height INT NOT NULL,
+    size INT NOT NULL,
+    created DATETIME NOT NULL,
+    updated DATETIME NOT NULL
+);
+
+CREATE INDEX idx_media_created ON media(created);
+```
