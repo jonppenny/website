@@ -10,10 +10,10 @@ type PostModel struct {
 	DB *sql.DB
 }
 
-func (m *PostModel) Insert(title, content, status, f string) (int, error) {
+func (m *PostModel) Insert(title, content, status, image string) (int, error) {
 	stmt := `INSERT INTO posts (title, content, status, created, updated, image) VALUES(?, ?, ?, UTC_TIMESTAMP(), UTC_TIMESTAMP(), ?)`
 
-	result, err := m.DB.Exec(stmt, title, content, status, f)
+	result, err := m.DB.Exec(stmt, title, content, status, image)
 	if err != nil {
 		return 0, err
 	}
@@ -42,10 +42,10 @@ func (m *PostModel) Get(id int) (*models.Post, error) {
 	return p, nil
 }
 
-func (m *PostModel) Update(id int, title, content, status, f string) error {
+func (m *PostModel) Update(id int, title, content, status, image string) error {
 	stmt := `UPDATE posts SET title = ?, content = ?, status = ?, updated = UTC_TIMESTAMP(), image = ? WHERE id = ?`
 
-	_, err := m.DB.Exec(stmt, title, content, status, f, id)
+	_, err := m.DB.Exec(stmt, title, content, status, image, id)
 	if err != nil {
 		return err
 	}
@@ -65,7 +65,7 @@ func (m *PostModel) Delete(id int) error {
 }
 
 func (m *PostModel) Latest() ([]*models.Post, error) {
-	q := `SELECT id, title, content, created, updated FROM posts ORDER BY created DESC LIMIT 10`
+	q := `SELECT id, title, content, created, updated, image FROM posts ORDER BY created DESC LIMIT 10`
 
 	rows, err := m.DB.Query(q)
 	if err != nil {
@@ -79,7 +79,7 @@ func (m *PostModel) Latest() ([]*models.Post, error) {
 	for rows.Next() {
 		s := &models.Post{}
 
-		err = rows.Scan(&s.ID, &s.Title, &s.Content, &s.Created, &s.Updated)
+		err = rows.Scan(&s.ID, &s.Title, &s.Content, &s.Created, &s.Updated, &s.Image)
 		if err != nil {
 			return nil, err
 		}

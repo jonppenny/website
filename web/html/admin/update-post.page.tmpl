@@ -11,12 +11,12 @@
                 {{with .Post}}
                 <input type='hidden' name='post_id' value='{{.ID}}'>
                 <div class="form-group">
-                    <label>Title:</label>
+                    <label>Title</label>
                     <input class="form-control" type='text' name='title' value='{{.Title}}'>
                 </div>
                 <div class="form-group">
-                    <label>Content:</label>
-                    <textarea id="content" class="form-control" name='content'>{{.Content}}</textarea>
+                    <label>Content</label>
+                    <textarea id="content" class="form-control" name='content' style="min-height: 128px;">{{.Content}}</textarea>
                 </div>
                 <div class="form-group">
                     <label for="exampleFormControlSelect1">Post Status</label>
@@ -29,10 +29,13 @@
                 </div>
                 <div class="form-group">
                     <label>Post Image</label>
+                    {{with .Errors.Get "image"}}
+                    <label class='error'>{{.}}</label>
+                    {{end}}
+                    <input id='image' class='form-control-file' type='file' name='image' />
                     {{if .Image}}
                     <img src="/static/media/{{.Image}}" alt="{{.Title}}" class="d-block" style="width: 128px;" />
                     {{end}}
-                    <input id="image" class='form-control' type='file' name='image' />
                 </div>
                 <div class="form-group">
                     <input type='submit' value='Publish post' class="btn btn-primary">
@@ -43,6 +46,16 @@
     </div>
 </div>
 {{end}}
+
+<style>
+    .ck-editor__editable_inline {
+        min-height: 128px;
+    }
+    label.error {
+        color: darkred;
+    }
+</style>
+
 <script type="text/javascript">
   ClassicEditor
     .create(document.querySelector('#content'))

@@ -6,7 +6,7 @@ create table posts (
     id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(100) NOT NULL,
     content TEXT NOT NULL,
-    image VARCHAR(255) NOT NULL DEFAULT '',
+    image VARCHAR(255),
     status TEXT NOT NULL,
     created DATETIME NOT NULL,
     updated DATETIME NOT NULL

@@ -171,7 +171,7 @@ func (app *application) dashboardCreatePost(w http.ResponseWriter, r *http.Reque
 	}
 
 	form := forms.New(r.PostForm)
-	form.Required("title", "content")
+	form.Required("title", "content", "image")
 	form.MaxLength("title", 100)
 	form.PermittedValues("status", "published", "draft")
 
