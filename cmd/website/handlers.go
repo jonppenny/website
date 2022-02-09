@@ -180,7 +180,13 @@ func (app *application) dashboardCreatePost(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	id, err := app.posts.Insert(form.Get("title"), form.Get("content"), form.Get("status"))
+	f, err := app.uploadFile(r, "image")
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	id, err := app.posts.Insert(form.Get("title"), form.Get("content"), form.Get("status"), f)
 	if err != nil {
 		app.serverError(w, err)
 		return
@@ -228,8 +234,14 @@ func (app *application) dashboardUpdatePost(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	f, err := app.uploadFile(r, "image")
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
 	pid, _ := strconv.Atoi(form.Get("post_id"))
-	err = app.posts.Update(pid, form.Get("title"), form.Get("content"), form.Get("status"))
+	err = app.posts.Update(pid, form.Get("title"), form.Get("content"), form.Get("status"), f)
 	if err != nil {
 		app.serverError(w, err)
 		return

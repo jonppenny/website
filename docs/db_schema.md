@@ -6,6 +6,7 @@ create table posts (
     id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(100) NOT NULL,
     content TEXT NOT NULL,
+    image VARCHAR(255) NOT NULL DEFAULT '',
     status TEXT NOT NULL,
     created DATETIME NOT NULL,
     updated DATETIME NOT NULL
@@ -22,6 +23,7 @@ create table pages (
     content TEXT NOT NULL,
     status TEXT NOT NULL,
     slug VARCHAR(255) NOT NULL,
+    image VARCHAR(255) NOT NULL DEFAULT '',
     created DATETIME NOT NULL,
     updated DATETIME NOT NULL
 );

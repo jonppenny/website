@@ -4,8 +4,11 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/justinas/nosurf"
+	"io"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 	"runtime/debug"
 	"time"
 )
@@ -88,4 +91,38 @@ func (app *application) isAuthenticated(r *http.Request) bool {
 		return false
 	}
 	return isAuthenticated
+}
+
+func (app *application) uploadFile(r *http.Request, fileInput string) (string, error) {
+	// Maximum upload of 10 MB files
+	err := r.ParseMultipartForm(10 << 20)
+	if err != nil {
+		return "", err
+	}
+
+	// Get handler for filename, size and headers
+	file, handler, err := r.FormFile(fileInput)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	err = os.MkdirAll("web/static/media/", 0755)
+	if err != nil {
+		return "", err
+	}
+
+	// Create file
+	dst, err := os.Create(filepath.Join("web/static/media/", filepath.Base(handler.Filename)))
+	defer dst.Close()
+	if err != nil {
+		return "", err
+	}
+
+	// Copy the uploaded file to the created file on the filesystem
+	if _, err := io.Copy(dst, file); err != nil {
+		return "", err
+	}
+
+	return handler.Filename, nil
 }
