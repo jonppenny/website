@@ -2,14 +2,18 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
+	"github.com/gabriel-vasile/mimetype"
 	"github.com/justinas/nosurf"
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"runtime/debug"
+	"strconv"
 	"time"
 )
 
@@ -107,6 +111,17 @@ func (app *application) uploadFile(r *http.Request, fileInput string) (string, e
 	}
 	defer file.Close()
 
+	fileMimetype, err := mimetype.DetectFile(handler.Filename)
+	if err != nil {
+		return "", err
+	}
+
+	allowedMimes := []string{"jpg", "jpeg", "png", "gif"}
+	fileCheck := StringInSlice(fileMimetype.String(), allowedMimes)
+	if fileCheck != true {
+		return "", errors.New("filetype is not allowed")
+	}
+
 	err = os.MkdirAll("web/static/media/", 0755)
 	if err != nil {
 		return "", err
@@ -125,4 +140,28 @@ func (app *application) uploadFile(r *http.Request, fileInput string) (string, e
 	}
 
 	return handler.Filename, nil
+}
+
+func (app *application) readInt(qs url.Values, key string, def int) (int, error) {
+	s := qs.Get(key)
+
+	if s == "" {
+		return def, nil
+	}
+
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		return def, err
+	}
+
+	return i, nil
+}
+
+func StringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
 }
