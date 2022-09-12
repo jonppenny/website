@@ -64,10 +64,8 @@ func (m *PostModel) Delete(id int) error {
 	return nil
 }
 
-func (m *PostModel) Latest() ([]*models.Post, error) {
-	q := `SELECT id, title, content, created, updated, image FROM posts ORDER BY created DESC LIMIT 10`
-
-	rows, err := m.DB.Query(q)
+func (m *PostModel) Latest(limit, offset int) ([]*models.Post, error) {
+	rows, err := m.DB.Query("SELECT id, title, content, created, updated, image FROM posts ORDER BY created DESC LIMIT ? OFFSET ?", limit, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -92,4 +90,14 @@ func (m *PostModel) Latest() ([]*models.Post, error) {
 	}
 
 	return posts, nil
+}
+
+func (m *PostModel) Total() (int, error) {
+	var c int
+	err := m.DB.QueryRow("SELECT COUNT(id) FROM posts").Scan(&c)
+	if err != nil {
+		return 0, err
+	}
+
+	return c, nil
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"math"
 	"net/http"
 	"strconv"
 
@@ -12,13 +13,38 @@ import (
 
 // Website Section.
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	p, err := app.posts.Latest()
+	qs := r.URL.Query()
+
+	l, err := app.readInt(qs, "limit", 12)
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
 
-	app.render(w, r, "home.page.tmpl", &templateData{Posts: p}, false, false)
+	p, err := app.readInt(qs, "page", 1)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	ps, err := app.posts.Latest(l, (p*l)-l)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	t, err := app.posts.Total()
+	if err != nil {
+		app.serverError(w, err)
+	}
+
+	pg := &models.Pagination{
+		CurrentPage: p,
+		TotalPages:  int(math.Ceil(float64(t / l))),
+		NextPage:    p + 1,
+		PrevPage:    p - 1,
+	}
+	app.render(w, r, "home.page.tmpl", &templateData{Posts: ps, Pagination: pg}, false, false)
 }
 
 func (app *application) about(w http.ResponseWriter, r *http.Request) {
@@ -151,7 +177,21 @@ func (app *application) dashboard(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) dashboardAllPosts(w http.ResponseWriter, r *http.Request) {
-	p, err := app.posts.Latest()
+	qs := r.URL.Query()
+
+	limit, err := app.readInt(qs, "page_size", 1)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	offset, err := app.readInt(qs, "page", 0)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	p, err := app.posts.Latest(limit, offset)
 	if err != nil {
 		app.serverError(w, err)
 		return

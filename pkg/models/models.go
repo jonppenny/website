@@ -56,3 +56,10 @@ type User struct {
 	Created        time.Time
 	Updated        time.Time
 }
+
+type Pagination struct {
+	CurrentPage int
+	TotalPages  int
+	PrevPage    int
+	NextPage    int
+}
