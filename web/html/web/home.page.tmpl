@@ -41,6 +41,8 @@
                 {{end}}
                 {{ if (lt $CurrentPage $TotalPages) }}
                     <a href="?page={{ $nextPages }}">Next</a>
+                {{else}}
+                    <span></span>
                 {{end}}
                 </div>
             {{end}}
