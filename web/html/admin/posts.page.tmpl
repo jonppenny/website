@@ -23,6 +23,26 @@
                 </tr>
                 {{end}}
             </table>
+            {{with .Pagination}}
+            <div class="d-flex align-items-center justify-content-start w-100">
+                {{ $CurrentPage := .CurrentPage }}
+                {{ $TotalPages := .TotalPages }}
+
+                {{ $prevPage := .PrevPage }}
+                {{ $nextPages := .NextPage }}
+
+                {{ if (gt $CurrentPage 1) }}
+                <a class="btn btn-primary mr-2" href="?page={{ $prevPage }}">Prev</a>
+                {{else}}
+                <span></span>
+                {{end}}
+                {{ if (lt $CurrentPage $TotalPages) }}
+                <a class="btn btn-primary mr-2" href="?page={{ $nextPages }}">Next</a>
+                {{else}}
+                <span></span>
+                {{end}}
+            </div>
+            {{end}}
             {{else}}
             <p>There's nothing to see here... yet!</p>
             {{end}}

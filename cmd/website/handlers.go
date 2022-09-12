@@ -44,6 +44,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		NextPage:    p + 1,
 		PrevPage:    p - 1,
 	}
+
 	app.render(w, r, "home.page.tmpl", &templateData{Posts: ps, Pagination: pg}, false, false)
 }
 
@@ -179,24 +180,37 @@ func (app *application) dashboard(w http.ResponseWriter, r *http.Request) {
 func (app *application) dashboardAllPosts(w http.ResponseWriter, r *http.Request) {
 	qs := r.URL.Query()
 
-	limit, err := app.readInt(qs, "page_size", 1)
+	l, err := app.readInt(qs, "limit", 12)
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
 
-	offset, err := app.readInt(qs, "page", 0)
+	p, err := app.readInt(qs, "page", 1)
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
 
-	p, err := app.posts.Latest(limit, offset)
+	ps, err := app.posts.Latest(l, (p*l)-l)
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
-	app.render(w, r, "posts.page.tmpl", &templateData{Posts: p}, true, false)
+
+	t, err := app.posts.Total()
+	if err != nil {
+		app.serverError(w, err)
+	}
+
+	pg := &models.Pagination{
+		CurrentPage: p,
+		TotalPages:  int(math.Ceil(float64(t / l))),
+		NextPage:    p + 1,
+		PrevPage:    p - 1,
+	}
+
+	app.render(w, r, "posts.page.tmpl", &templateData{Posts: ps, Pagination: pg}, true, false)
 }
 
 func (app *application) dashboardCreatePostForm(w http.ResponseWriter, r *http.Request) {
