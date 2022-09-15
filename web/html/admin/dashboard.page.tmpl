@@ -1,9 +1,46 @@
 {{template "base" .}}
 {{define "main"}}
-<div class="container-fluid">
+<div class="container">
     <div class="row">
         <div class="col-12">
-            admin
+            <h1>Dashboard</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    Posts
+                </div>
+                <div class="card-body">
+                    <p>Manage posts</p>
+                    <a class="btn btn-primary" href="/admin/posts">View Posts</a>
+                    <a class="btn btn-primary" href="/admin/post/create">Create Post</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    Pages
+                </div>
+                <div class="card-body">
+                    <p>Manage pages</p>
+                    <a class="btn btn-primary" href="/admin/pages">View Pages</a>
+                    <a class="btn btn-primary" href="/admin/page/create">Create Page</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    Users
+                </div>
+                <div class="card-body">
+                    <p>Manage users</p>
+                    <a class="btn btn-primary" href="/admin/profile">My Profile</a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
