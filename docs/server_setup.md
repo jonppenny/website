@@ -13,14 +13,14 @@ Description=goweb
 Type=simple
 Restart=always
 RestartSec=5s
-WorkingDirectory=/home/jon/go-web
-ExecStart=/home/jon/go-web/web
+WorkingDirectory=/home/my_user/go-web
+ExecStart=/home/my_user/go-web/web
 
 [Install]
 WantedBy=multi-user.target
 ```
 
-Note the working directory line, this is required for static files.
+Note the working directory line, this is required for static files. Replace `my_user` with your user directory.
 
 ## Docker Container
 To run a Docker MySQL server, see [this link](https://phoenixnap.com/kb/mysql-docker-container).
