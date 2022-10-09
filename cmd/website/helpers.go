@@ -48,7 +48,8 @@ func (app *application) addDefaultData(td *templateData, r *http.Request) *templ
 func (app *application) render(w http.ResponseWriter, r *http.Request, name string, td *templateData, isAdmin, isCredentials bool) {
 	buf := new(bytes.Buffer)
 
-	if isAdmin {
+	switch {
+	case isAdmin:
 		adminTemplates, ok := app.adminTemplateCache[name]
 		if !ok {
 			app.serverError(w, fmt.Errorf("the template %s does not exist in admin", name))
@@ -59,7 +60,8 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 		if err != nil {
 			app.serverError(w, err)
 		}
-	} else if isCredentials {
+		break
+	case isCredentials:
 		credentialsTemplates, ok := app.credentialsTemplateCache[name]
 		if !ok {
 			app.serverError(w, fmt.Errorf("the template %s does not exist in credentials", name))
@@ -70,7 +72,8 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 		if err != nil {
 			app.serverError(w, err)
 		}
-	} else {
+		break
+	default:
 		websiteTemplates, ok := app.templateCache[name]
 		if !ok {
 			app.serverError(w, fmt.Errorf("the template %s does not exist", name))
@@ -81,6 +84,7 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 		if err != nil {
 			app.serverError(w, err)
 		}
+		break
 	}
 
 	_, err := buf.WriteTo(w)
