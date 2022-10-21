@@ -47,7 +47,6 @@ func (app *application) routes() http.Handler {
 
 	// Front end website.
 	mux.Get("/", dynamicMiddleware.ThenFunc(app.home))
-	// mux.Get("/about", dynamicMiddleware.ThenFunc(app.about))
 
 	mux.Get("/post/:id", dynamicMiddleware.ThenFunc(app.showPost))
 
