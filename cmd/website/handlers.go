@@ -48,10 +48,6 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, "home.page.tmpl", &templateData{Posts: ps, Pagination: pg}, false, false)
 }
 
-func (app *application) about(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, "about.page.tmpl", nil, false, false)
-}
-
 func (app *application) showPost(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
 	if err != nil || id < 1 {
