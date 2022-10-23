@@ -352,7 +352,7 @@ func (app *application) changePassword(w http.ResponseWriter, r *http.Request) {
 
 	app.session.Put(r, "flash", "Your password has been updated.")
 
-	http.Redirect(w, r, "/user/profile", http.StatusSeeOther)
+	http.Redirect(w, r, "/admin/profile", http.StatusSeeOther)
 }
 
 func (app *application) dashboardAllPages(w http.ResponseWriter, r *http.Request) {
