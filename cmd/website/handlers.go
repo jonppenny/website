@@ -221,7 +221,7 @@ func (app *application) dashboardCreatePost(w http.ResponseWriter, r *http.Reque
 	}
 
 	form := forms.New(r.PostForm)
-	form.Required("title", "content", "image")
+	form.Required("title", "content")
 	form.MaxLength("title", 100)
 	form.PermittedValues("status", "published", "draft")
 
@@ -230,10 +230,14 @@ func (app *application) dashboardCreatePost(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	f, err := app.uploadFile(r, "image")
-	if err != nil {
-		app.serverError(w, err)
-		return
+	var f string
+	file := form.Get("image")
+	if len(file) > 0 {
+		f, err = app.uploadFile(r, "image")
+		if err != nil {
+			app.serverError(w, err)
+			return
+		}
 	}
 
 	id, err := app.posts.Insert(form.Get("title"), form.Get("content"), form.Get("status"), f)
