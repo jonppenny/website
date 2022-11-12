@@ -1,22 +1,27 @@
 root = true
 
 [*]
+charset = utf-8
+trim_trailing_whitespace = true
 end_of_line = lf
+insert_final_newline = true
 
 [*.go]
 indent_style = tab
 indent_size = 4
-insert_final_newline = true
 
-[*.{c,cpp,h,inl}]
+[*.{c,h,cpp,hpp}]
 indent_style = space
 indent_size = 4
-insert_final_newline = true
 
 [*.{txt,md}]
 indent_style = space
 indent_size = 4
 
-[*.{html,css,scss,sass,js,xml}]
+[*.{html,css,scss,sass,xml}]
 indent_style = space
 indent_size = 2
+
+[*.js]
+indent_style = space
+indent_size = 4
