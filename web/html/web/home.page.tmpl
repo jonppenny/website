@@ -1,55 +1,57 @@
 {{template "base" .}}
 {{define "title"}}Home{{end}}
 {{define "main"}}
-<div class="container pb-4">
-    <div class="row">
-        <div class="col-12">
-            <h1>Welcome!</h1>
-        </div>
-    </div>
-</div>
 
 <div class="container">
     <div class="row">
         {{if .Posts}}
-            {{range .Posts}}
-            <div class="col-12 col-md-6 col-lg-4 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h2>{{.Title}}</h2>
-                        <span>Posted on: {{humanDate .Created}}</span>
-                        <hr>
-                        <div>
-                            <a class="btn btn-secondary" href='/post/{{.ID}}'>Read More</a>
-                        </div>
+        {{range .Posts}}
+        <div class="col-12 col-md-6 col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <a href='/post/{{.ID}}'><h1>{{.Title}}</h1></a>
+                    <span class="date">Posted on: {{humanDate .Created}}</span>
+                    <hr>
+                    <div>
+                        <a class="btn btn-primary" href='/post/{{.ID}}'>Read More</a>
                     </div>
                 </div>
             </div>
-            {{end}}
-            {{with .Pagination}}
-                <div class="d-flex align-items-center justify-content-between w-100">
+        </div>
+        {{end}}
+        {{with .Pagination}}
+        <div class="col-12">
+            <div id="pagination" class="d-flex align-items-center justify-content-between w-100">
                 {{ $CurrentPage := .CurrentPage }}
                 {{ $TotalPages := .TotalPages }}
 
                 {{ $prevPage := .PrevPage }}
-                {{ $nextPages := .NextPage }}
+                {{ $nextPage := .NextPage }}
 
                 {{ if (gt $CurrentPage 1) }}
-                    <a href="?page={{ $prevPage }}">Prev</a>
+                <a class="d-flex align-items-center" href="?page={{ $prevPage }}">
+                    <i class="icon-arrow-left2"></i>
+                    <!--&nbsp;<span>PREV</span>-->
+                </a>
                 {{else}}
-                    <span></span>
+                <span></span>
                 {{end}}
+                <span class="current-page">{{$CurrentPage}}</span>
                 {{ if (lt $CurrentPage $TotalPages) }}
-                    <a href="?page={{ $nextPages }}">Next</a>
+                <a class="d-flex align-items-center" href="?page={{ $nextPage }}">
+                    <!--<span class="d-block">NEXT</span>&nbsp;-->
+                    <i class="icon-arrow-right2"></i>
+                </a>
                 {{else}}
-                    <span></span>
+                <span></span>
                 {{end}}
-                </div>
-            {{end}}
-        {{else}}
-            <div class="col-12">
-                <p>There's nothing to see here... yet!</p>
             </div>
+        </div>
+        {{end}}
+        {{else}}
+        <div class="col-12">
+            <p>There's nothing to see here... yet!</p>
+        </div>
         {{end}}
     </div>
 </div>
