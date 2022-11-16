@@ -36,7 +36,11 @@
                 {{else}}
                 <span></span>
                 {{end}}
+
+                {{ if (gt $CurrentPage 1) }}
                 <span class="current-page">{{$CurrentPage}}</span>
+                {{ end }}
+
                 {{ if (lt $CurrentPage $TotalPages) }}
                 <a class="d-flex align-items-center" href="?page={{ $nextPage }}">
                     <!--<span class="d-block">NEXT</span>&nbsp;-->
