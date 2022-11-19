@@ -43,6 +43,7 @@ type Post struct {
 	Created time.Time
 	Updated time.Time
 	Image   string
+	Excerpt string
 }
 
 type User struct {

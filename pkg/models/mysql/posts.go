@@ -29,8 +29,8 @@ func (m *PostModel) Insert(title, content, status, image string) (int, error) {
 func (m *PostModel) Get(id int) (*models.Post, error) {
 	p := &models.Post{}
 
-	stmt := `SELECT id, title, content, status, created, updated, image FROM posts WHERE id = ?`
-	err := m.DB.QueryRow(stmt, id).Scan(&p.ID, &p.Title, &p.Content, &p.Status, &p.Created, &p.Updated, &p.Image)
+	stmt := `SELECT id, title, content, status, created, updated, image, excerpt FROM posts WHERE id = ?`
+	err := m.DB.QueryRow(stmt, id).Scan(&p.ID, &p.Title, &p.Content, &p.Status, &p.Created, &p.Updated, &p.Image, &p.Excerpt)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, models.ErrNoRecord
@@ -42,10 +42,10 @@ func (m *PostModel) Get(id int) (*models.Post, error) {
 	return p, nil
 }
 
-func (m *PostModel) Update(id int, title, content, status, image string) error {
-	stmt := `UPDATE posts SET title = ?, content = ?, status = ?, updated = UTC_TIMESTAMP(), image = ? WHERE id = ?`
+func (m *PostModel) Update(id int, title, content, status, image, excerpt string) error {
+	stmt := `UPDATE posts SET title = ?, content = ?, status = ?, updated = UTC_TIMESTAMP(), image = ?, excerpt = ? WHERE id = ?`
 
-	_, err := m.DB.Exec(stmt, title, content, status, image, id)
+	_, err := m.DB.Exec(stmt, title, content, status, image, excerpt, id)
 	if err != nil {
 		return err
 	}
@@ -65,7 +65,7 @@ func (m *PostModel) Delete(id int) error {
 }
 
 func (m *PostModel) Latest(limit, offset int) ([]*models.Post, error) {
-	rows, err := m.DB.Query("SELECT id, title, content, created, updated, image FROM posts ORDER BY created DESC LIMIT ? OFFSET ?", limit, offset)
+	rows, err := m.DB.Query("SELECT id, title, content, created, updated, image, excerpt FROM posts ORDER BY created DESC LIMIT ? OFFSET ?", limit, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (m *PostModel) Latest(limit, offset int) ([]*models.Post, error) {
 	for rows.Next() {
 		s := &models.Post{}
 
-		err = rows.Scan(&s.ID, &s.Title, &s.Content, &s.Created, &s.Updated, &s.Image)
+		err = rows.Scan(&s.ID, &s.Title, &s.Content, &s.Created, &s.Updated, &s.Image, &s.Excerpt)
 		if err != nil {
 			return nil, err
 		}

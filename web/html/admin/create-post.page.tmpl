@@ -24,6 +24,13 @@
                     <textarea id="content" class="form-control" name='content' style="min-height: 128px;">{{.Get "content"}}</textarea>
                 </div>
                 <div class="form-group">
+                    <label>Excerpt</label>
+                    {{with .Errors.Get "excerpt"}}
+                    <label class='error'>{{.}}</label>
+                    {{end}}
+                    <textarea id="excerpt" class="form-control" name='excerpt' style="min-height: 64px;">{{.Get "excerpt"}}</textarea>
+                </div>
+                <div class="form-group">
                     <label for="exampleFormControlSelect1">Post Status</label>
                     {{$status := or (.Get "status") ""}}
                     <select class="form-control" id="exampleFormControlSelect1" name="status">

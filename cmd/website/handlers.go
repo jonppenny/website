@@ -221,8 +221,9 @@ func (app *application) dashboardCreatePost(w http.ResponseWriter, r *http.Reque
 	}
 
 	form := forms.New(r.PostForm)
-	form.Required("title", "content")
+	form.Required("title", "content", "excerpt")
 	form.MaxLength("title", 100)
+	form.MaxLength("excerpt", 255)
 	form.PermittedValues("status", "published", "draft")
 
 	if !form.Valid() {
@@ -230,14 +231,10 @@ func (app *application) dashboardCreatePost(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	var f string
-	file := form.Get("image")
-	if len(file) > 0 {
-		f, err = app.uploadFile(r, "image")
-		if err != nil {
-			app.serverError(w, err)
-			return
-		}
+	f, err := app.uploadFile(r, "image")
+	if err != nil {
+		app.serverError(w, err)
+		return
 	}
 
 	id, err := app.posts.Insert(form.Get("title"), form.Get("content"), form.Get("status"), f)
@@ -288,14 +285,14 @@ func (app *application) dashboardUpdatePost(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	f, err := app.uploadFile(r, "image")
+	/*f, err := app.uploadFile(r, "image")
 	if err != nil {
 		app.serverError(w, err)
 		return
-	}
+	}*/
 
 	pid, _ := strconv.Atoi(form.Get("post_id"))
-	err = app.posts.Update(pid, form.Get("title"), form.Get("content"), form.Get("status"), f)
+	err = app.posts.Update(pid, form.Get("title"), form.Get("content"), form.Get("status"), "", form.Get("excerpt"))
 	if err != nil {
 		app.serverError(w, err)
 		return

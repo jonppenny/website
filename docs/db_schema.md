@@ -7,6 +7,7 @@ create table posts (
     title VARCHAR(100) NOT NULL,
     content TEXT NOT NULL,
     image VARCHAR(255),
+    excerpt VARCHAR(255) NOT NULL,
     status TEXT NOT NULL,
     created DATETIME NOT NULL,
     updated DATETIME NOT NULL
