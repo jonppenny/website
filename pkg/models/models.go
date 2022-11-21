@@ -64,3 +64,5 @@ type Pagination struct {
 	PrevPage    int
 	NextPage    int
 }
+
+type Menu struct{}

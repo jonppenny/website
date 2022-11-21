@@ -126,13 +126,13 @@ func (app *application) uploadFile(r *http.Request, fileInput string) (string, e
 		return "", errors.New("filetype is not allowed")
 	}
 
-	err = os.MkdirAll("web/static/media/", 0755)
+	err = os.MkdirAll("static/media/", 0755)
 	if err != nil {
 		return "", err
 	}
 
 	// Create file
-	dst, err := os.Create(filepath.Join("web/static/media/", filepath.Base(handler.Filename)))
+	dst, err := os.Create(filepath.Join("static/media/", filepath.Base(handler.Filename)))
 	defer dst.Close()
 	if err != nil {
 		return "", err

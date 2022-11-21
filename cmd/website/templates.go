@@ -20,4 +20,5 @@ type templateData struct {
 	Users           []*models.User
 	MediaItems      []*models.Media
 	Pagination      *models.Pagination
+	Menu            *models.Menu
 }

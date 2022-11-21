@@ -42,8 +42,8 @@ func (app *application) routes() http.Handler {
 	mux.Post("/admin/change-password", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.changePassword))
 
 	// Static files.
-	fileServer := http.FileServer(http.Dir("./web/static/"))
-	mux.Get("/static/", http.StripPrefix("/static", fileServer))
+	fileServer := http.FileServer(http.Dir("./static/assets"))
+	mux.Get("/assets/", http.StripPrefix("/assets", fileServer))
 
 	// Front end website.
 	mux.Get("/", dynamicMiddleware.ThenFunc(app.home))

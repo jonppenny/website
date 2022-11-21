@@ -28,6 +28,7 @@ type application struct {
 	posts                    *mysql.PostModel
 	pages                    *mysql.PageModel
 	users                    *mysql.UserModel
+	menus                    *mysql.MenuModel
 	templateCache            map[string]*template.Template
 	adminTemplateCache       map[string]*template.Template
 	credentialsTemplateCache map[string]*template.Template
@@ -60,17 +61,17 @@ func main() {
 	}
 	defer db.Close()
 
-	templateCache, err := templates.NewTemplateCache("./web/html/web")
+	templateCache, err := templates.NewTemplateCache("./static/html/web")
 	if err != nil {
 		errorLog.Fatal(err)
 	}
 
-	adminTemplateCache, err := templates.NewTemplateCache("./web/html/admin")
+	adminTemplateCache, err := templates.NewTemplateCache("./static/html/admin")
 	if err != nil {
 		errorLog.Fatal(err)
 	}
 
-	credentialsTemplateCache, err := templates.NewTemplateCache("./web/html/credentials")
+	credentialsTemplateCache, err := templates.NewTemplateCache("./static/html/credentials")
 	if err != nil {
 		errorLog.Fatal(err)
 	}
@@ -93,7 +94,6 @@ func main() {
 	}
 
 	tlsConfig := &tls.Config{
-		PreferServerCipherSuites: true,
 		CurvePreferences: []tls.CurveID{
 			tls.X25519,
 			tls.CurveP256,
