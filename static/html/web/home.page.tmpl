@@ -6,10 +6,11 @@
     <div class="row">
         {{if .Posts}}
         {{range .Posts}}
-        <div class="col-12">
+        <div class="col-12 col-md-8 offset-md-2">
             <div class="mb-5 pb-5 post">
                 <a href='/post/{{.ID}}'>
                     <h1>{{.Title}}</h1>
+                    <div class="line"></div>
                     <span class="d-block mb-2 date"><small>Posted on: {{humanDate .Created}}</small></span>
                     <p>{{.Excerpt}}</p>
                 </a>
@@ -17,7 +18,7 @@
         </div>
         {{end}}
         {{with .Pagination}}
-        <div class="col-12">
+        <div class="col-12 col-md-8 offset-md-2">
             <div id="pagination" class="d-flex align-items-center justify-content-between w-100">
                 {{ $CurrentPage := .CurrentPage }}
                 {{ $TotalPages := .TotalPages }}
@@ -34,9 +35,9 @@
                 <span></span>
                 {{end}}
 
-                {{ if (gt $CurrentPage 1) }}
+                <!--{{ if (gt $CurrentPage 1) }}-->
                 <span class="current-page">{{$CurrentPage}}</span>
-                {{ end }}
+                <!--{{ end }}-->
 
                 {{ if (lt $CurrentPage $TotalPages) }}
                 <a class="d-flex align-items-center" href="?page={{ $nextPage }}">
@@ -50,7 +51,7 @@
         </div>
         {{end}}
         {{else}}
-        <div class="col-12">
+        <div class="col-12 col-md-8 offset-md-2">
             <p>There's nothing to see here... yet!</p>
         </div>
         {{end}}
