@@ -17,7 +17,6 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
             integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
             crossorigin="anonymous"></script>
-    <script src="https://cdn.ckeditor.com/ckeditor5/27.0.0/classic/ckeditor.js"></script>
 </head>
 <body>
 <header class="pb-4">
@@ -69,5 +68,23 @@
 </main>
 {{template "footer" .}}
 </body>
+
+<style>
+    .ck-editor__editable_inline {
+        min-height: 256px;
+    }
+    label.error {
+        color: darkred;
+    }
+</style>
+
+<script type="text/javascript" src="/assets/js/ckeditor/ckeditor.js"></script>
+<script type="text/javascript">
+  ClassicEditor.create(document.querySelector('#content'))
+    .catch(error => {
+      console.error(error)
+    })
+</script>
+
 </html>
 {{end}}
