@@ -26,16 +26,17 @@ func (app *application) routes() http.Handler {
 	mux.Get("/admin", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.dashboard))
 
 	mux.Get("/admin/posts", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.dashboardAllPosts))
-	mux.Get("/admin/post/create", dynamicMiddleware.ThenFunc(app.dashboardCreatePostForm))
-	mux.Post("/admin/post/create", dynamicMiddleware.ThenFunc(app.dashboardCreatePost))
-	mux.Get("/admin/post/:id", dynamicMiddleware.ThenFunc(app.dashboardUpdatePostForm))
-	mux.Post("/admin/post/:id", dynamicMiddleware.ThenFunc(app.dashboardUpdatePost))
+	mux.Get("/admin/post/create", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.dashboardCreatePostForm))
+	mux.Post("/admin/post/create", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.dashboardCreatePost))
+	mux.Get("/admin/post/:id", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.dashboardUpdatePostForm))
+	mux.Post("/admin/post/:id", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.dashboardUpdatePost))
 
 	mux.Get("/admin/pages", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.dashboardAllPages))
 	mux.Get("/admin/page/create", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.dashboardCreatePageForm))
 	mux.Post("/admin/page/create", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.dashboardCreatePage))
-	mux.Get("/admin/page/:id", dynamicMiddleware.ThenFunc(app.dashboardUpdatePageForm))
-	mux.Post("/admin/page/:id", dynamicMiddleware.ThenFunc(app.dashboardUpdatePage))
+	mux.Get("/admin/page/:id", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.dashboardUpdatePageForm))
+	mux.Post("/admin/page/:id", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.dashboardUpdatePage))
+	mux.Post("/admin/page/delete/:id", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.dashboardDeletePage))
 
 	mux.Get("/admin/profile", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.userProfile))
 	mux.Get("/admin/change-password", dynamicMiddleware.Append(app.requireAuthentication).ThenFunc(app.changePasswordForm))
@@ -47,6 +48,8 @@ func (app *application) routes() http.Handler {
 
 	// Front end website.
 	mux.Get("/", dynamicMiddleware.ThenFunc(app.home))
+	mux.Get("/contact", dynamicMiddleware.ThenFunc(app.contactForm))
+	mux.Post("/contact", dynamicMiddleware.ThenFunc(app.contact))
 
 	mux.Get("/post/:id", dynamicMiddleware.ThenFunc(app.showPost))
 
