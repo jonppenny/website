@@ -1,4 +1,4 @@
-package main
+package middleware
 
 import (
 	"context"
@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/justinas/nosurf"
-
 	"jonppenny.co.uk/webapp/pkg/models"
 )
 

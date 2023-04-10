@@ -3,10 +3,12 @@ package mysql
 import (
 	"database/sql"
 	"errors"
+	"strings"
+
 	"github.com/go-sql-driver/mysql"
 	"golang.org/x/crypto/bcrypt"
+
 	"jonppenny.co.uk/webapp/pkg/models"
-	"strings"
 )
 
 type UserModel struct {

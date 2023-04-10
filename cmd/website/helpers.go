@@ -4,17 +4,18 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/gabriel-vasile/mimetype"
-	"github.com/justinas/nosurf"
 	"io"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
 	"path/filepath"
 	"runtime/debug"
-	"strconv"
 	"time"
+
+	"github.com/gabriel-vasile/mimetype"
+	"github.com/justinas/nosurf"
+
+	"jonppenny.co.uk/webapp/pkg/helpers"
 )
 
 func (app *application) serverError(w http.ResponseWriter, err error) {
@@ -121,7 +122,7 @@ func (app *application) uploadFile(r *http.Request, fileInput string) (string, e
 	}
 
 	allowedMimes := []string{"jpg", "jpeg", "png", "gif"}
-	fileCheck := StringInSlice(fileMimetype.String(), allowedMimes)
+	fileCheck := helpers.StringInSlice(fileMimetype.String(), allowedMimes)
 	if fileCheck != true {
 		return "", errors.New("filetype is not allowed")
 	}
@@ -144,28 +145,4 @@ func (app *application) uploadFile(r *http.Request, fileInput string) (string, e
 	}
 
 	return handler.Filename, nil
-}
-
-func (app *application) readInt(qs url.Values, key string, def int) (int, error) {
-	s := qs.Get(key)
-
-	if s == "" {
-		return def, nil
-	}
-
-	i, err := strconv.Atoi(s)
-	if err != nil {
-		return def, err
-	}
-
-	return i, nil
-}
-
-func StringInSlice(a string, list []string) bool {
-	for _, b := range list {
-		if b == a {
-			return true
-		}
-	}
-	return false
 }

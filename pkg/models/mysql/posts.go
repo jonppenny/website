@@ -3,6 +3,7 @@ package mysql
 import (
 	"database/sql"
 	"errors"
+
 	"jonppenny.co.uk/webapp/pkg/models"
 )
 

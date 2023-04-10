@@ -4,17 +4,19 @@ import (
 	"crypto/tls"
 	"flag"
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/golangcollege/sessions"
-	"github.com/spf13/viper"
 	"html/template"
-	"jonppenny.co.uk/webapp/internal/database"
-	"jonppenny.co.uk/webapp/internal/templates"
-	"jonppenny.co.uk/webapp/pkg/models/mysql"
 	"log"
 	"net/http"
 	"os"
 	"time"
+
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/golangcollege/sessions"
+	"github.com/spf13/viper"
+
+	"jonppenny.co.uk/webapp/internal/database"
+	"jonppenny.co.uk/webapp/internal/templates"
+	"jonppenny.co.uk/webapp/pkg/models/mysql"
 )
 
 type contextKey string

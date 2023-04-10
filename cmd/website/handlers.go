@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"jonppenny.co.uk/webapp/pkg/forms"
+	"jonppenny.co.uk/webapp/pkg/helpers"
 	"jonppenny.co.uk/webapp/pkg/models"
 )
 
@@ -15,13 +16,13 @@ import (
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	qs := r.URL.Query()
 
-	l, err := app.readInt(qs, "limit", 12)
+	l, err := helpers.ReadInt(qs, "limit", 12)
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
 
-	p, err := app.readInt(qs, "page", 1)
+	p, err := helpers.ReadInt(qs, "page", 1)
 	if err != nil {
 		app.serverError(w, err)
 		return
@@ -46,6 +47,38 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	}
 
 	app.render(w, r, "home.page.tmpl", &templateData{Posts: ps, Pagination: pg}, false, false)
+}
+
+func (app *application) contactForm(w http.ResponseWriter, r *http.Request) {
+	app.render(w, r, "contact.page.tmpl", &templateData{
+		Form: forms.New(nil),
+	}, false, false)
+}
+
+func (app *application) contact(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	form := forms.New(r.PostForm)
+	form.Required("name", "email", "message")
+	form.MaxLength("name", 255)
+	form.MaxLength("email", 255)
+	form.MatchesPattern("email", forms.EmailRX)
+	form.MinLength("message", 1)
+
+	if !form.Valid() {
+		app.render(w, r, "contact.page.tmpl", &templateData{
+			Form: forms.New(nil),
+		}, false, false)
+		return
+	}
+
+	app.session.Put(r, "flash", "Email has been sent.")
+
+	http.Redirect(w, r, "/contact", http.StatusSeeOther)
 }
 
 func (app *application) showPost(w http.ResponseWriter, r *http.Request) {
@@ -176,13 +209,13 @@ func (app *application) dashboard(w http.ResponseWriter, r *http.Request) {
 func (app *application) dashboardAllPosts(w http.ResponseWriter, r *http.Request) {
 	qs := r.URL.Query()
 
-	l, err := app.readInt(qs, "limit", 12)
+	l, err := helpers.ReadInt(qs, "limit", 12)
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
 
-	p, err := app.readInt(qs, "page", 1)
+	p, err := helpers.ReadInt(qs, "page", 1)
 	if err != nil {
 		app.serverError(w, err)
 		return
@@ -231,13 +264,13 @@ func (app *application) dashboardCreatePost(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	f, err := app.uploadFile(r, "image")
+	/*f, err := helpers.UploadFile(r, "image")
 	if err != nil {
 		app.serverError(w, err)
 		return
-	}
+	}*/
 
-	id, err := app.posts.Insert(form.Get("title"), form.Get("content"), form.Get("status"), f)
+	id, err := app.posts.Insert(form.Get("title"), form.Get("content"), form.Get("status"), "")
 	if err != nil {
 		app.serverError(w, err)
 		return
@@ -285,7 +318,7 @@ func (app *application) dashboardUpdatePost(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	/*f, err := app.uploadFile(r, "image")
+	/*f, err := helpers.UploadFile(r, "image")
 	if err != nil {
 		app.serverError(w, err)
 		return
@@ -444,4 +477,23 @@ func (app *application) dashboardUpdatePage(w http.ResponseWriter, r *http.Reque
 	app.session.Put(r, "flash", "Page updated successfully.")
 
 	http.Redirect(w, r, fmt.Sprintf("/admin/page/%d", pid), http.StatusSeeOther)
+}
+
+func (app *application) dashboardDeletePage(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+	form := forms.New(r.PostForm)
+	pid, _ := strconv.Atoi(form.Get("page_id"))
+	err = app.pages.Delete(pid)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	app.session.Put(r, "flash", "Page deleted successfully.")
+
+	http.Redirect(w, r, fmt.Sprintf("/admin/pages"), http.StatusSeeOther)
 }
