@@ -11,10 +11,10 @@ type PostModel struct {
 	DB *sql.DB
 }
 
-func (m *PostModel) Insert(title, content, status, image string) (int, error) {
-	stmt := `INSERT INTO posts (title, content, status, created, updated, image) VALUES(?, ?, ?, UTC_TIMESTAMP(), UTC_TIMESTAMP(), ?)`
+func (m *PostModel) Insert(title, content, status, image, excerpt string) (int, error) {
+	stmt := `INSERT INTO posts (title, content, status, created, updated, image, excerpt) VALUES(?, ?, ?, UTC_TIMESTAMP(), UTC_TIMESTAMP(), ?, ?)`
 
-	result, err := m.DB.Exec(stmt, title, content, status, image)
+	result, err := m.DB.Exec(stmt, title, content, status, image, excerpt)
 	if err != nil {
 		return 0, err
 	}

@@ -270,7 +270,7 @@ func (app *application) dashboardCreatePost(w http.ResponseWriter, r *http.Reque
 		return
 	}*/
 
-	id, err := app.posts.Insert(form.Get("title"), form.Get("content"), form.Get("status"), "")
+	id, err := app.posts.Insert(form.Get("title"), form.Get("content"), form.Get("status"), "", form.Get("excerpt"))
 	if err != nil {
 		app.serverError(w, err)
 		return
@@ -309,7 +309,7 @@ func (app *application) dashboardUpdatePost(w http.ResponseWriter, r *http.Reque
 	}
 
 	form := forms.New(r.PostForm)
-	form.Required("title", "content")
+	form.Required("title", "content", "excerpt")
 	form.MaxLength("title", 100)
 	form.PermittedValues("status", "published", "draft")
 
