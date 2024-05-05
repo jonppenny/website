@@ -8,18 +8,16 @@
         {{range .Posts}}
         <div class="col-12 col-md-8 offset-md-2">
             <div class="mb-5 pb-5 post">
-                <a href='/post/{{.ID}}'>
-                    <h1>{{.Title}}</h1>
-                    <div class="line"></div>
-                    <span class="d-block mb-2 date"><small>Posted on: {{humanDate .Created}}</small></span>
-                    <p>{{.Excerpt}}</p>
-                </a>
+                <h1>{{.Title}}</h1>
+                <span class="d-block mb-2 date"><small>Posted on: {{humanDate .Created}}</small></span>
+                <p>{{.Excerpt}}</p>
+                <a href='/post/{{.ID}}'>Read More</a>
             </div>
         </div>
         {{end}}
         {{with .Pagination}}
         <div class="col-12 col-md-8 offset-md-2">
-            <div id="pagination" class="d-flex align-items-center justify-content-between w-100">
+            <div id="pagination" class="d-flex align-items-center justify-content-between w-100 pagination">
                 {{ $CurrentPage := .CurrentPage }}
                 {{ $TotalPages := .TotalPages }}
 
