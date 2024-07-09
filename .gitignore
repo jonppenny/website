@@ -4,5 +4,8 @@
 /config.yaml
 /build
 *.swp
-
+*-lock.json
+*.lock
 /static/media
+/static/dist
+/public
