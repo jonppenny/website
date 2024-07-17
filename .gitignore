@@ -7,5 +7,4 @@
 *-lock.json
 *.lock
 /static/media
-/static/dist
-/public
+/dist

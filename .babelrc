@@ -1,0 +1,16 @@
+{
+    "presets": [
+        [
+            "@babel/preset-env"
+        ]
+    ],
+    "plugins": [
+        [
+            "wildcard",
+            {
+                "useCamelCase": true
+            }
+        ],
+        "@babel/plugin-transform-object-assign"
+    ]
+}
